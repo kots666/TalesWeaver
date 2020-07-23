@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{88cd0904-ebb2-4608-b38c-be72187011e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{bbf44957-8c53-404f-923c-e391d264dfc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Headers">
+      <UniqueIdentifier>{ab4661fc-563c-4226-988e-657d9b91f3f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj">
+      <UniqueIdentifier>{5f926e0d-adf1-4702-9f09-1973e2e6586c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\Player">
+      <UniqueIdentifier>{e8e28fc7-bec8-47a3-ad14-ece2c41b81ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\Mouse">
+      <UniqueIdentifier>{de4aeb39-abd9-4f65-9941-26ac3ca61c89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\Monster">
+      <UniqueIdentifier>{a50f946f-76f9-494d-a0d5-5935f90a4661}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.DesignPatterns">
+      <UniqueIdentifier>{7e6d1a9b-8069-4ce4-8f5d-c871e06d86e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.Collision Manager">
+      <UniqueIdentifier>{b1af90ba-33f8-4264-b062-6bcaffb094ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.DesignPatterns\AbstractFactory">
+      <UniqueIdentifier>{d421e5fb-c972-4193-a82b-cf2dfc3b6a8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.DesignPatterns\Singletone Mediator">
+      <UniqueIdentifier>{56d4f3c0-7da6-44ae-98f6-63a2d2ab7905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\UI">
+      <UniqueIdentifier>{874a3a50-732e-4c75-a30b-143b5bfd9a42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\MotionTrail">
+      <UniqueIdentifier>{bb9547e9-4592-4ff0-bf6e-0ef676c41ec1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.ObjManager">
+      <UniqueIdentifier>{be2893ac-bcca-43e5-bb5a-2971cc698b51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.KeyManager">
+      <UniqueIdentifier>{b85e03df-9e4f-45a7-bc6a-f741d0ff9244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Bitmap">
+      <UniqueIdentifier>{0b4dd526-45f9-41e9-a5b3-094970a119c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Bitmap\BitmapManager">
+      <UniqueIdentifier>{8e246932-d44e-4d92-a43c-9705ff92de46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.SoundManager">
+      <UniqueIdentifier>{b6fe8304-b5dc-4978-8167-b2e7eafc56b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene">
+      <UniqueIdentifier>{fa329608-f387-44ed-9637-b6abb7ac622a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene\SceneManager">
+      <UniqueIdentifier>{1971af0b-705c-4350-8b8f-8bd2abc6764d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.ScrollManager">
+      <UniqueIdentifier>{1b001677-1f39-4e68-8ae1-b41fc7a80ea3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene\01.Logo">
+      <UniqueIdentifier>{b8cee005-2822-4332-b6ed-87ae4525bd4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene\02.Title">
+      <UniqueIdentifier>{72ad7958-711a-4251-864f-c82663eed4f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07.Tile">
+      <UniqueIdentifier>{7861b769-5f6a-432a-b1c2-04c9d84ee9b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07.Tile\TileManager">
+      <UniqueIdentifier>{2f8a14d8-5ac0-4591-a344-cf105622e00c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\WidthButton">
+      <UniqueIdentifier>{47bc5771-4591-4648-8263-4037957d0696}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene\03.Edit">
+      <UniqueIdentifier>{e6ba3c8e-fbd9-4288-bd85-30999f54a842}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene\04.Town">
+      <UniqueIdentifier>{260d23b3-6342-4ce3-91f5-ea8bb2845105}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene\05.Shop">
+      <UniqueIdentifier>{71e75665-5dd5-42fb-bf5b-ac06eb39b532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene\06.Field">
+      <UniqueIdentifier>{166eb180-4da3-4a80-aa2a-73a086f8e411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Scene\09.Boss">
+      <UniqueIdentifier>{3633790d-de6a-499a-82a6-9a2ee0a1b5e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Camera">
+      <UniqueIdentifier>{10d97798-6e21-47e2-8de5-697058868970}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\Effect">
+      <UniqueIdentifier>{0df71ff7-3b33-4a72-bb21-b0b78f450de9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\CollideRect">
+      <UniqueIdentifier>{d8e2446e-49f0-4954-a81b-3edccda8056c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\Monster\Jelly">
+      <UniqueIdentifier>{e4c94a07-1254-42fa-b0b2-2d8215a6f1b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\InfoButton">
+      <UniqueIdentifier>{c0e05580-6f7e-478c-bc9c-fac6804eed00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\DamageFont">
+      <UniqueIdentifier>{2d1ed8c8-ad60-4ccb-ac0b-d98bb7d71c6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\DamageFont\DamageFontManager">
+      <UniqueIdentifier>{a9262047-dc0b-44bf-b32f-9fd0536c0ea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\Boss">
+      <UniqueIdentifier>{a585fcdc-9b63-424e-9ade-63a444ca6100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\ComboUI">
+      <UniqueIdentifier>{bfb34dda-f43c-4e92-b735-fc872dc85682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\ComboUI\ComboManager">
+      <UniqueIdentifier>{a780172a-5840-4261-b956-7c07ac9064a1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32API.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="Extern.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Obj.h">
+      <Filter>01.Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>01.Obj\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Enum.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>01.Obj\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionManager.h">
+      <Filter>97.Collision Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractFactory.h">
+      <Filter>98.DesignPatterns\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="MotionTrail.h">
+      <Filter>01.Obj\MotionTrail</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>01.Obj\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjManager.h">
+      <Filter>02.ObjManager</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyManager.h">
+      <Filter>03.KeyManager</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapManager.h">
+      <Filter>05.Bitmap\BitmapManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollManager.h">
+      <Filter>04.ScrollManager</Filter>
+    </ClInclude>
+    <ClInclude Include="MyBitmap.h">
+      <Filter>05.Bitmap</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>06.Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLogo.h">
+      <Filter>06.Scene\01.Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>06.Scene\SceneManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>96.SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTitle.h">
+      <Filter>06.Scene\02.Title</Filter>
+    </ClInclude>
+    <ClInclude Include="TileManager.h">
+      <Filter>07.Tile\TileManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>07.Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="WidthButton.h">
+      <Filter>01.Obj\WidthButton</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneEdit.h">
+      <Filter>06.Scene\03.Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>04.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTown.h">
+      <Filter>06.Scene\04.Town</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneShop.h">
+      <Filter>06.Scene\05.Shop</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneBoss.h">
+      <Filter>06.Scene\09.Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneField.h">
+      <Filter>06.Scene\06.Field</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>01.Obj\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="CollideRect.h">
+      <Filter>01.Obj\CollideRect</Filter>
+    </ClInclude>
+    <ClInclude Include="Frames.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Jelly.h">
+      <Filter>01.Obj\Monster\Jelly</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss.h">
+      <Filter>01.Obj\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="InfoButton.h">
+      <Filter>01.Obj\InfoButton</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageFont.h">
+      <Filter>01.Obj\DamageFont</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageFontManager.h">
+      <Filter>01.Obj\DamageFont\DamageFontManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ComboUI.h">
+      <Filter>01.Obj\ComboUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ComboManager.h">
+      <Filter>01.Obj\ComboUI\ComboManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32API.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Obj.cpp">
+      <Filter>01.Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>01.Obj\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>01.Obj\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionManager.cpp">
+      <Filter>97.Collision Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MotionTrail.cpp">
+      <Filter>01.Obj\MotionTrail</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>01.Obj\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjManager.cpp">
+      <Filter>02.ObjManager</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyManager.cpp">
+      <Filter>03.KeyManager</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapManager.cpp">
+      <Filter>05.Bitmap\BitmapManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollManager.cpp">
+      <Filter>04.ScrollManager</Filter>
+    </ClCompile>
+    <ClCompile Include="MyBitmap.cpp">
+      <Filter>05.Bitmap</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>06.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLogo.cpp">
+      <Filter>06.Scene\01.Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>06.Scene\SceneManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>96.SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTitle.cpp">
+      <Filter>06.Scene\02.Title</Filter>
+    </ClCompile>
+    <ClCompile Include="TileManager.cpp">
+      <Filter>07.Tile\TileManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>07.Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="WidthButton.cpp">
+      <Filter>01.Obj\WidthButton</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneEdit.cpp">
+      <Filter>06.Scene\03.Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>04.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTown.cpp">
+      <Filter>06.Scene\04.Town</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneShop.cpp">
+      <Filter>06.Scene\05.Shop</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneBoss.cpp">
+      <Filter>06.Scene\09.Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneField.cpp">
+      <Filter>06.Scene\06.Field</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>01.Obj\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="CollideRect.cpp">
+      <Filter>01.Obj\CollideRect</Filter>
+    </ClCompile>
+    <ClCompile Include="Jelly.cpp">
+      <Filter>01.Obj\Monster\Jelly</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss.cpp">
+      <Filter>01.Obj\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="InfoButton.cpp">
+      <Filter>01.Obj\InfoButton</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageFont.cpp">
+      <Filter>01.Obj\DamageFont</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageFontManager.cpp">
+      <Filter>01.Obj\DamageFont\DamageFontManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ComboUI.cpp">
+      <Filter>01.Obj\ComboUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComboManager.cpp">
+      <Filter>01.Obj\ComboUI\ComboManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Win32API.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Win32API.rc">
+      <Filter>99.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>99.Default</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
