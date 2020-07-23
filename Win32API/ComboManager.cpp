@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ComboManager.h"
 #include "ComboUI.h"
-#include "Player.h"
+#include "ComboLine.h"
 
 int CComboManager::m_combo = 0;
 
@@ -16,4 +16,7 @@ void CComboManager::IncreaseCombo()
 		CObj* newUI = new CComboUI(CObjManager::GetInstance()->GetPlayer());
 		CObjManager::GetInstance()->AddObject(newUI, OBJ::COMBO);
 	}
+
+	CObj* newComLine = new CComboLine;
+	CObjManager::GetInstance()->AddObject(newComLine, OBJ::COMBO);
 }

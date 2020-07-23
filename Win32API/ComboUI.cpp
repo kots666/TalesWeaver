@@ -78,20 +78,20 @@ void CComboUI::RenderCombo(HDC hDC, float x, float y)
 	if (length & 1)
 	{
 		int gap = (length - 1) / 2;
-		xPos = x + 70.f - (gap * 23) - 12.f;
+		xPos = x + 75.f - (gap * 23) - 12.f;
 		yPos = y;
 	}
 	// Â¦¼öÀÎ °æ¿ì
 	else
 	{
 		int gap = length >> 1;
-		xPos = x + 60.f - (gap * 23);
+		xPos = x + 67.f - (gap * 23);
 		yPos = y;
 	}
 
 	if (1 == length)
 	{
-		TransparentBlt(hDC, xPos - CCamera::GetX(), yPos - CCamera::GetY(), 23, 30, numDC, combo * 23, 0, 23, 30, RGB(255, 0, 255));
+		TransparentBlt(hDC, xPos - CCamera::GetX(), yPos - CCamera::GetY(), 20, 30, numDC, combo * 23, 0, 23, 30, RGB(255, 0, 255));
 	}
 	else
 	{
@@ -104,7 +104,7 @@ void CComboUI::RenderCombo(HDC hDC, float x, float y)
 			int num = combo / powNum;
 			combo %= powNum;
 
-			TransparentBlt(hDC, xPos - CCamera::GetX() + (i++ * 23), yPos - CCamera::GetY(), 23, 30, numDC, num * 23, 0, 23, 30, RGB(255, 0, 255));
+			TransparentBlt(hDC, xPos - CCamera::GetX() + (i++ * 20), yPos - CCamera::GetY(), 20, 30, numDC, num * 23, 0, 23, 30, RGB(255, 0, 255));
 		}
 	}
 }

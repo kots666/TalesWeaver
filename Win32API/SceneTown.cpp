@@ -68,7 +68,7 @@ void CSceneTown::Render(HDC hDC)
 
 	BitBlt(hDC, 0, 0, WINCX, WINCY, memDC, CCamera::GetX(), CCamera::GetY(), SRCCOPY);
 
-	CTileManager::GetInstance()->Render(hDC);
+	//CTileManager::GetInstance()->Render(hDC);
 }
 
 void CSceneTown::Release()

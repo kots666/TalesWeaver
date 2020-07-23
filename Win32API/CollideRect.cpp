@@ -32,7 +32,7 @@ int CCollideRect::Update()
 
 void CCollideRect::LateUpdate()
 {
-	if (m_spawnTime + m_lifeTime < GetTickCount())
+	if (m_spawnTime + m_lifeTime <= GetTickCount())
 	{
 		if (!m_isHit) CComboManager::ResetCombo();
 		m_isDead = true;
@@ -42,6 +42,11 @@ void CCollideRect::LateUpdate()
 
 void CCollideRect::Render(HDC hDC)
 {
+	/*
+	HDC memDC = CBitmapManager::GetInstance()->GetDC(__T("Tile_Normal"));
+
+	StretchBlt(hDC, m_rect.left - CCamera::GetX(), m_rect.top - CCamera::GetY(), m_info.xSize, m_info.ySize, memDC, 0, 0, 30, 30, SRCCOPY);
+	*/
 }
 
 void CCollideRect::Release()

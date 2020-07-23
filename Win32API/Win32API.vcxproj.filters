@@ -124,6 +124,9 @@
     <Filter Include="01.Obj\ComboUI\ComboManager">
       <UniqueIdentifier>{a780172a-5840-4261-b956-7c07ac9064a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Obj\ComboLine">
+      <UniqueIdentifier>{3055cabf-68b9-426a-ab1d-bf782159f600}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -264,6 +267,7 @@
     <ClInclude Include="ComboManager.h">
       <Filter>01.Obj\ComboUI\ComboManager</Filter>
     </ClInclude>
+    <ClInclude Include="ComboLine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -377,6 +381,7 @@
     <ClCompile Include="ComboManager.cpp">
       <Filter>01.Obj\ComboUI\ComboManager</Filter>
     </ClCompile>
+    <ClCompile Include="ComboLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Win32API.ico">

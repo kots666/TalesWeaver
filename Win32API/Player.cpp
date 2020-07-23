@@ -84,10 +84,6 @@ void CPlayer::Render(HDC hDC)
 	HDC memDC = GetDCByDirection(m_direction);
 
 	TransparentBlt(hDC, xPos - CCamera::GetX(), yPos - CCamera::GetY(), 256, 256, memDC, m_frame.startFrame * 256, PLAYER_FRAME::SCENE[m_frame.sceneFrame] * 256, 256, 256, RGB(255, 0, 255));
-
-	HDC tileDC = CBitmapManager::GetInstance()->GetDC(__T("Tile_Boss"));
-
-	TransparentBlt(hDC, m_moveRect.left - CCamera::GetX(), m_moveRect.top - CCamera::GetY(), m_moveRect.right - m_moveRect.left, m_moveRect.bottom - m_moveRect.top, tileDC, 0, 0, 30, 30, RGB(255, 0, 255));
 }
 
 void CPlayer::Release()
@@ -213,11 +209,12 @@ void CPlayer::FrameProcess()
 			{
 				if (PLAYER_MAX_ATT > m_atkCnt)
 				{
-					++m_comboCnt;
 					++m_atkCnt;
 					m_curScene = m_nextScene;
 					m_nextScene = PLAYER_SCENE::IDLE;
-					ExecuteSpeedScene(m_curScene);
+
+					if (CComboManager::GetCombo()) ExecuteSpeedScene(m_curScene);
+					else ExecuteScene(m_curScene);
 				}
 				else
 				{
@@ -228,10 +225,11 @@ void CPlayer::FrameProcess()
 			// 공격이 끝났고 스킬을 사용할 경우
 			else if (PLAYER_SCENE::ATTACK == m_curScene && PLAYER_SCENE::READY == m_nextScene)
 			{
-				++m_comboCnt;
 				m_curScene = m_nextScene;
 				m_nextScene = PLAYER_SCENE::IDLE;
-				ExecuteSpeedScene(m_curScene);
+
+				if (CComboManager::GetCombo()) ExecuteSpeedScene(m_curScene);
+				else ExecuteScene(m_curScene);
 			}
 			// 스킬이 끝났고 공격을 할 경우
 			else if (PLAYER_SCENE::SKILL == m_curScene && PLAYER_SCENE::ATTACK == m_nextScene)
@@ -239,7 +237,9 @@ void CPlayer::FrameProcess()
 				++m_comboCnt;
 				m_curScene = m_nextScene;
 				m_nextScene = PLAYER_SCENE::IDLE;
-				ExecuteSpeedScene(m_curScene);
+
+				if (CComboManager::GetCombo()) ExecuteSpeedScene(m_curScene);
+				else ExecuteScene(m_curScene);
 			}
 			else
 			{
@@ -263,13 +263,15 @@ void CPlayer::KeyCheck()
 	// 일정 시간이 지나야 다시 공격 가능
 	if (m_attackTime + m_attackSpeed < GetTickCount())
 	{
-
 		if (CKeyManager::GetInstance()->isKeyDown(KEY_Z))
 		{
 			if (PLAYER_SCENE::HIT != m_curScene && PLAYER_SCENE::READY != m_curScene && PLAYER_SCENE::SKILL != m_curScene)
 			{
 				m_skillNum = SKILL::Moon;
-				if (PLAYER_SCENE::ATTACK == m_curScene) m_nextScene = PLAYER_SCENE::READY;
+				if (PLAYER_SCENE::ATTACK == m_curScene)
+				{
+					if (CComboManager::GetCombo()) m_nextScene = PLAYER_SCENE::READY;
+				}
 				else
 				{
 					m_curScene = PLAYER_SCENE::READY;
@@ -284,7 +286,10 @@ void CPlayer::KeyCheck()
 			if (PLAYER_SCENE::HIT != m_curScene && PLAYER_SCENE::READY != m_curScene && PLAYER_SCENE::SKILL != m_curScene)
 			{
 				m_skillNum = SKILL::Boom;
-				if (PLAYER_SCENE::ATTACK == m_curScene) m_nextScene = PLAYER_SCENE::READY;
+				if (PLAYER_SCENE::ATTACK == m_curScene)
+				{
+					if (CComboManager::GetCombo()) m_nextScene = PLAYER_SCENE::READY;
+				}
 				else
 				{
 					m_curScene = PLAYER_SCENE::READY;
@@ -298,8 +303,14 @@ void CPlayer::KeyCheck()
 		{
 			if (PLAYER_SCENE::HIT != m_curScene && PLAYER_SCENE::READY != m_curScene)
 			{
-				if (PLAYER_SCENE::ATTACK == m_curScene) m_nextScene = PLAYER_SCENE::ATTACK;
-				else if (PLAYER_SCENE::SKILL == m_curScene) m_nextScene = PLAYER_SCENE::ATTACK;
+				if (PLAYER_SCENE::ATTACK == m_curScene)
+				{
+					if (CComboManager::GetCombo()) m_nextScene = PLAYER_SCENE::ATTACK;
+				}
+				else if (PLAYER_SCENE::SKILL == m_curScene)
+				{
+					if (CComboManager::GetCombo()) m_nextScene = PLAYER_SCENE::ATTACK;
+				}
 				else
 				{
 					m_curScene = PLAYER_SCENE::ATTACK;
@@ -437,35 +448,37 @@ void CPlayer::SkillMoon()
 	float xPos = m_info.xPos;
 	float yPos = m_info.yPos;
 
+	float mul = 1.5f;
+
 	switch (m_direction)
 	{
 	case EX_DIR::LEFT:
-		xPos -= TILECX * 2;
+		xPos -= TILECX * mul;
 		break;
 	case EX_DIR::LD:
-		xPos -= TILECX * 2 / sqrtf(2.f);
-		yPos += TILECY * 2 / sqrtf(2.f);
+		xPos -= TILECX * mul / sqrtf(2.f);
+		yPos += TILECY * mul / sqrtf(2.f);
 		break;
 	case EX_DIR::DOWN:
-		yPos += TILECY * 2;
+		yPos += TILECY * mul;
 		break;
 	case EX_DIR::RD:
-		xPos += TILECX * 2 / sqrtf(2.f);
-		yPos += TILECY * 2 / sqrtf(2.f);
+		xPos += TILECX * mul / sqrtf(2.f);
+		yPos += TILECY * mul / sqrtf(2.f);
 		break;
 	case EX_DIR::RIGHT:
-		xPos += TILECX * 2;
+		xPos += TILECX * mul;
 		break;
 	case EX_DIR::RU:
-		xPos += TILECX * 2 / sqrtf(2.f);
-		yPos -= TILECY * 2 / sqrtf(2.f);
+		xPos += TILECX * mul / sqrtf(2.f);
+		yPos -= TILECY * mul / sqrtf(2.f);
 		break;
 	case EX_DIR::UP:
-		yPos -= TILECY * 2;
+		yPos -= TILECY * mul;
 		break;
 	case EX_DIR::LU:
-		xPos -= TILECX * 2 / sqrtf(2.f);
-		yPos -= TILECY * 2 / sqrtf(2.f);
+		xPos -= TILECX * mul / sqrtf(2.f);
+		yPos -= TILECY * mul / sqrtf(2.f);
 		break;
 	}
 
@@ -508,10 +521,7 @@ void CPlayer::SkillBoom()
 		}
 	}
 
-	float xPos = m_info.xPos - width;
-	float yPos = m_info.yPos - height;
-
-	SpawnCollide(xPos, yPos, width * 3, height * 3, 50, OBJ::PLAYER_SKILL);
+	SpawnCollide(m_info.xPos, m_info.yPos, width * 3, height * 3, 50, OBJ::PLAYER_SKILL);
 }
 
 void CPlayer::SpawnCollide(float xPos, float yPos, int cx, int cy, int atk, OBJ::TAG type, DWORD lifeTime)

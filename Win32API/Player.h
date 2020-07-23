@@ -28,7 +28,7 @@ public:
 	void SkillSpawnCheck();
 	void SkillMoon();
 	void SkillBoom();
-	void SpawnCollide(float xPos, float yPos, int cx, int cy, int atk, OBJ::TAG type, DWORD lifeTime = 50);
+	void SpawnCollide(float xPos, float yPos, int cx, int cy, int atk, OBJ::TAG type, DWORD lifeTime = 0);
 
 	// Combo
 	void ResetCombo();
