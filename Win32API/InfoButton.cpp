@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "InfoButton.h"
+#include "Player.h"
 
 CInfoButton::CInfoButton(float x, float y, int cx, int cy, const TCHAR * key, int cx2, int cy2, const TCHAR * child)
 	: m_key(key), m_childKey(child), m_childCX(cx2), m_childCY(cy2), m_isChildOpen(false)
@@ -70,9 +71,125 @@ void CInfoButton::Render(HDC hDC)
 		int childHeight = m_childCY;
 
 		TransparentBlt(hDC, childX, y, childWidth, childHeight, childDC, 0, 0, childWidth, childHeight, color);
+
+		if (!(lstrcmp(m_childKey, __T("Stat_Info")))) StatRender(hDC, childX, y);
+		if (!(lstrcmp(m_childKey, __T("Equip_Info")))) EquipRender(hDC);
+		if (!(lstrcmp(m_childKey, __T("Inven_Info")))) InvenRender(hDC);
 	}
 }
 
 void CInfoButton::Release()
 {
+}
+
+void CInfoButton::StatRender(HDC hDC, float x, float y)
+{
+	// EXP ¹Ù ·»´õ
+	HDC memDC = CBitmapManager::GetInstance()->GetDC(__T("Exp"));
+
+	CObj* player = CObjManager::GetInstance()->GetPlayer();
+	if (nullptr == player) return;
+
+	int lv = player->GetLV();
+	float exp = player->GetEXP();
+	float totalExp = lv * 100;
+
+	float val = 300 * exp / totalExp;
+
+	float revVal = 256 * val / 300.f;
+
+	StretchBlt(hDC, x + 34, y + 146, val, 2, memDC, 0, 0, revVal, 2, SRCCOPY);
+
+	// ±ÛÀÚ ·»´õ
+	StatTextRender(hDC, x, y);
+}
+
+void CInfoButton::EquipRender(HDC hDC)
+{
+}
+
+void CInfoButton::InvenRender(HDC hDC)
+{
+}
+
+void CInfoButton::StatTextRender(HDC hDC, float x, float y)
+{
+	HDC memDC = CreateCompatibleDC(hDC);
+	HBITMAP bmp = CreateCompatibleBitmap(hDC, WINCX, WINCY);
+	HBITMAP oldBmp = (HBITMAP)SelectObject(memDC, bmp);
+
+	HFONT myFont = CreateFont(11, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, __T("±¼¸²"));
+	HFONT oldFont = (HFONT)SelectObject(memDC, myFont);
+
+	SetBkColor(memDC, RGB(0, 0, 0));
+	SetTextColor(memDC, RGB(255, 255, 255));
+
+	BitBlt(memDC, 0, 0, WINCX, WINCY, hDC, 0, 0, SRCCOPY);
+
+	TCHAR buffer[30];
+
+	CPlayer* player = dynamic_cast<CPlayer*>(CObjManager::GetInstance()->GetPlayer());
+	if (nullptr == player) return;
+
+	int level = player->GetLV();
+
+	int offsetX = 216;
+	int offsetY = 37;
+
+	if (level < 10) offsetX += 3;
+
+	// ·¹º§
+	wsprintf(buffer, __T("%d"), level);
+	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	offsetX = 225;
+	offsetY += 20;
+
+	// ÀÌ¸§
+	wsprintf(buffer, __T("¸·½Ã¹Î ¸®ÇÁÅ©³×"));
+	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	int hp = player->GetHP();
+	int maxHP = 100;
+
+	offsetX = 240;
+	offsetY = 182;
+
+	// HP
+	wsprintf(buffer, __T("%d / %d"), hp, maxHP);
+	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	int mp = player->GetMP();
+	int maxMP = 100;
+
+	offsetY += 15;
+
+	// MP
+	wsprintf(buffer, __T("%d / %d"), mp, maxMP);
+	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	int sp = player->GetSP();
+	int maxSP = 100;
+
+	offsetY += 15;
+
+	// SP
+	wsprintf(buffer, __T("%d / %d"), sp, maxSP);
+	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	int money = player->GetMoney();
+
+	offsetY += 15;
+
+	// Money
+	wsprintf(buffer, __T("%d"), money);
+	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	TransparentBlt(hDC, 0, 0, WINCX, WINCY, memDC, 0, 0, WINCX, WINCY, RGB(0, 0, 0));
+
+	SelectObject(memDC, oldFont);
+	DeleteObject(myFont);
+	SelectObject(memDC, oldBmp);
+	DeleteObject(bmp);
+	DeleteDC(memDC);
 }

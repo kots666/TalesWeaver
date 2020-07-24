@@ -29,26 +29,6 @@ void CMouse::Init()
 
 int CMouse::Update()
 {
-	// 클릭했는지 체크
-	CheckIdleClick();
-
-	// 클릭했을 때의 마우스
-	if (m_isClicked)
-	{
-		if (FRAME_END == UpdateFrame())
-		{
-			m_isClicked = false;
-			m_frame.startFrame = 0;
-			m_frame.endFrame = 13;
-			m_frame.sceneFrame = 0;
-			m_frame.frameTime = GetTickCount();
-		}
-	}
-	else
-	{
-		UpdateFrame();
-	}
-
 	// 마우스 기본적인 움직임
 	POINT pos = {};
 	GetCursorPos(&pos);
@@ -73,6 +53,26 @@ int CMouse::Update()
 
 void CMouse::LateUpdate()
 {
+	// 클릭했는지 체크
+	CheckIdleClick();
+
+	// 클릭했을 때의 마우스
+	if (m_isClicked)
+	{
+		if (FRAME_END == UpdateFrame())
+		{
+			m_isClicked = false;
+			m_frame.startFrame = 0;
+			m_frame.endFrame = 13;
+			m_frame.sceneFrame = 0;
+			m_frame.frameTime = GetTickCount();
+		}
+	}
+	else
+	{
+		UpdateFrame();
+	}
+
 	UpdateRect();
 }
 

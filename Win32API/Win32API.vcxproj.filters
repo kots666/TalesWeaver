@@ -61,9 +61,6 @@
     <Filter Include="06.Scene\SceneManager">
       <UniqueIdentifier>{1971af0b-705c-4350-8b8f-8bd2abc6764d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04.ScrollManager">
-      <UniqueIdentifier>{1b001677-1f39-4e68-8ae1-b41fc7a80ea3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06.Scene\01.Logo">
       <UniqueIdentifier>{b8cee005-2822-4332-b6ed-87ae4525bd4c}</UniqueIdentifier>
     </Filter>
@@ -127,6 +124,15 @@
     <Filter Include="01.Obj\ComboLine">
       <UniqueIdentifier>{3055cabf-68b9-426a-ab1d-bf782159f600}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Obj\TargetUI">
+      <UniqueIdentifier>{baf61a3c-5b0d-4496-85c8-487e3351543b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\NPC">
+      <UniqueIdentifier>{38542289-beed-49a6-be9d-bf474a7e249e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Obj\ShopUI">
+      <UniqueIdentifier>{807e8262-d972-4136-862a-3ab2508d0e6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -188,9 +194,6 @@
     </ClInclude>
     <ClInclude Include="BitmapManager.h">
       <Filter>05.Bitmap\BitmapManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ScrollManager.h">
-      <Filter>04.ScrollManager</Filter>
     </ClInclude>
     <ClInclude Include="MyBitmap.h">
       <Filter>05.Bitmap</Filter>
@@ -267,7 +270,18 @@
     <ClInclude Include="ComboManager.h">
       <Filter>01.Obj\ComboUI\ComboManager</Filter>
     </ClInclude>
-    <ClInclude Include="ComboLine.h" />
+    <ClInclude Include="ComboLine.h">
+      <Filter>01.Obj\ComboLine</Filter>
+    </ClInclude>
+    <ClInclude Include="TargetUI.h">
+      <Filter>01.Obj\TargetUI</Filter>
+    </ClInclude>
+    <ClInclude Include="NPC.h">
+      <Filter>01.Obj\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="ShopUI.h">
+      <Filter>01.Obj\ShopUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -305,9 +319,6 @@
     </ClCompile>
     <ClCompile Include="BitmapManager.cpp">
       <Filter>05.Bitmap\BitmapManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ScrollManager.cpp">
-      <Filter>04.ScrollManager</Filter>
     </ClCompile>
     <ClCompile Include="MyBitmap.cpp">
       <Filter>05.Bitmap</Filter>
@@ -381,7 +392,18 @@
     <ClCompile Include="ComboManager.cpp">
       <Filter>01.Obj\ComboUI\ComboManager</Filter>
     </ClCompile>
-    <ClCompile Include="ComboLine.cpp" />
+    <ClCompile Include="ComboLine.cpp">
+      <Filter>01.Obj\ComboLine</Filter>
+    </ClCompile>
+    <ClCompile Include="TargetUI.cpp">
+      <Filter>01.Obj\TargetUI</Filter>
+    </ClCompile>
+    <ClCompile Include="NPC.cpp">
+      <Filter>01.Obj\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="ShopUI.cpp">
+      <Filter>01.Obj\ShopUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Win32API.ico">

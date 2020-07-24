@@ -12,7 +12,9 @@ public:
 	virtual void LateUpdate() = 0;
 	virtual void Render(HDC hDC) = 0;
 	virtual void Release() = 0;
-	virtual void Damaged(int damage);
+	virtual void Damaged(int damage) {}
+	virtual void IncreaseEXP(int exp) {}
+	virtual void IncreaseMoney(int money) {}
 
 public:
 	void UpdateRect();
@@ -28,6 +30,10 @@ public:
 	void SetIsDead(bool dead) { m_isDead = dead; }
 	void SetHP(int hp) { m_hp = hp; }
 	void SetATK(int atk) { m_atk = atk; }
+	void SetEXP(int exp) { m_exp = exp; }
+	void SetTotalEXP(int totalExp) { m_totalExp = totalExp; }
+	void SetLV(int level) { m_level = level; }
+	void SetMoney(int money) { m_money = money; }
 
 	// getter
 	RECT GetRect() const { return m_rect; }
@@ -39,6 +45,10 @@ public:
 	bool GetIsDead() const { return m_isDead; }
 	int GetHP() const { return m_hp; }
 	int GetATK() const { return m_atk; }
+	int GetEXP() const { return m_exp; }
+	int GetTotalEXP() const { return m_totalExp; }
+	int GetLV() const { return m_level; }
+	int GetMoney() const { return m_money; }
 
 protected:
 	RECT m_rect;
@@ -48,5 +58,9 @@ protected:
 	bool m_isDead;
 	int m_hp;
 	int m_atk;
+	int m_exp;
+	int m_totalExp;
+	int m_level;
+	int m_money;
 };
 

@@ -43,12 +43,11 @@ using namespace std;
 #include "Function.h"
 #include "Frames.h"
 
-#include "CollisionManager.h"
 #include "AbstractFactory.h"
+#include "CollisionManager.h"
 
 #include "ObjManager.h"
 #include "KeyManager.h"
-#include "ScrollManager.h"
 #include "BitmapManager.h"
 #include "SceneManager.h"
 #include "TileManager.h"

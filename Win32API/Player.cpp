@@ -6,6 +6,7 @@
 #include "UI.h"
 #include "InfoButton.h"
 #include "ComboUI.h"
+#include "TargetUI.h"
 
 CPlayer::CPlayer(float x, float y, EX_DIR::TAG dir)
 	: m_direction(dir), m_attackTime(GetTickCount()), m_attackSpeed(0)
@@ -32,6 +33,12 @@ void CPlayer::Init()
 	m_hp = 100;
 	m_mp = 100;
 	m_sp = 100;
+
+	m_exp = 0;
+	m_totalExp = 100;
+	m_level = 1;
+
+	m_money = 1000;
 
 	m_isRun = false;
 	m_isHit = false;
@@ -73,6 +80,8 @@ int CPlayer::Update()
 
 void CPlayer::LateUpdate()
 {
+	CCamera::SetCenterX(m_info.xPos);
+	CCamera::SetCenterY(m_info.yPos);
 	UpdateRect();
 }
 
@@ -109,6 +118,21 @@ void CPlayer::Damaged(int damage)
 
 		CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
 	}
+}
+
+void CPlayer::IncreaseEXP(int exp)
+{
+	m_exp += exp;
+
+	while (m_exp >= m_totalExp)
+	{
+		LevelUp();
+	}
+}
+
+void CPlayer::IncreaseMoney(int money)
+{
+	m_money += money;
 }
 
 void CPlayer::CreateUI()
@@ -253,6 +277,11 @@ void CPlayer::FrameProcess()
 
 void CPlayer::KeyCheck()
 {
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_1))
+	{
+		LevelUp();
+	}
+
 	if (CKeyManager::GetInstance()->isKeyDown(KEY_R))
 	{
 		m_isRun ^= true;
@@ -530,6 +559,21 @@ void CPlayer::SpawnCollide(float xPos, float yPos, int cx, int cy, int atk, OBJ:
 	CObjManager::GetInstance()->AddObject(newCollide, type);
 }
 
+void CPlayer::LevelUp()
+{
+	m_exp -= m_totalExp;
+
+	m_totalExp = 100 * ++m_level;
+
+	m_hp = 100;
+	m_mp = 100;
+	m_sp = 100;
+
+	// LevelUp Effect
+	CObj* LVUP = new CTargetUI(this, 128, 128, __T("LvUp"), 256, 256, 0, 30, 30, RGB(255, 0, 255), true);
+	CObjManager::GetInstance()->AddObject(LVUP, OBJ::EFFECT);
+}
+
 void CPlayer::ResetCombo()
 {
 	CComboManager::ResetCombo();
@@ -568,17 +612,6 @@ void CPlayer::MoveUp(float speed)
 
 		if (m_isRun) ChangeAction(EX_DIR::UP, PLAYER_SCENE::RUN);
 		else ChangeAction(EX_DIR::UP, PLAYER_SCENE::WALK);
-
-		int minY = CCamera::GetY();
-		int pointY = minY + (WINCY / 2);
-
-		if (0 <= minY - speed)
-		{
-			if (m_info.yPos < pointY)
-			{
-				CCamera::SetY(m_info.yPos - WINCY / 2);
-			}
-		}
 	}
 }
 
@@ -601,17 +634,6 @@ void CPlayer::MoveLeft(float speed)
 
 		if (m_isRun) ChangeAction(EX_DIR::LEFT, PLAYER_SCENE::RUN);
 		else ChangeAction(EX_DIR::LEFT, PLAYER_SCENE::WALK);
-
-		int minX = CCamera::GetX();
-		int pointX = minX + (WINCX / 2);
-
-		if (0 <= minX - speed)
-		{
-			if (m_info.xPos < pointX)
-			{
-				CCamera::SetX(m_info.xPos - WINCX / 2);
-			}
-		}
 	}
 }
 
@@ -634,17 +656,6 @@ void CPlayer::MoveDown(float speed)
 
 		if (m_isRun) ChangeAction(EX_DIR::DOWN, PLAYER_SCENE::RUN);
 		else ChangeAction(EX_DIR::DOWN, PLAYER_SCENE::WALK);
-
-		int minY = CCamera::GetY();
-		int pointY = minY + (WINCY / 2);
-
-		if (CCamera::GetMaxY() >= minY + speed)
-		{
-			if (m_info.yPos > pointY)
-			{
-				CCamera::SetY(m_info.yPos - WINCY / 2);
-			}
-		}
 	}
 }
 
@@ -667,17 +678,6 @@ void CPlayer::MoveRight(float speed)
 
 		if (m_isRun) ChangeAction(EX_DIR::RIGHT, PLAYER_SCENE::RUN);
 		else ChangeAction(EX_DIR::RIGHT, PLAYER_SCENE::WALK);
-
-		int minX = CCamera::GetX();
-		int pointX = minX + (WINCX / 2);
-
-		if (CCamera::GetMaxX() >= minX + speed)
-		{
-			if (m_info.xPos > pointX)
-			{
-				CCamera::SetX(m_info.xPos - WINCX / 2);
-			}
-		}
 	}
 }
 

@@ -16,13 +16,13 @@ CSceneTitle::~CSceneTitle()
 void CSceneTitle::Init()
 {
 	CObj* newButton = new CWidthButton(401.5f, 405.f, 115, 24, __T("Start"));
-	CObjManager::GetInstance()->AddObject(newButton, OBJ::UI);
+	CObjManager::GetInstance()->AddObject(newButton, OBJ::BUTTON);
 
 	newButton = new CWidthButton(401.5f, 453.f, 115, 24, __T("Credit"));
-	CObjManager::GetInstance()->AddObject(newButton, OBJ::UI);
+	CObjManager::GetInstance()->AddObject(newButton, OBJ::BUTTON);
 
 	newButton = new CWidthButton(401.5f, 477.f, 115, 24, __T("Exit"));
-	CObjManager::GetInstance()->AddObject(newButton, OBJ::UI);
+	CObjManager::GetInstance()->AddObject(newButton, OBJ::BUTTON);
 
 	CTileManager::GetInstance();
 }

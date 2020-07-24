@@ -15,6 +15,13 @@ public:
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
 
+public:
+	void StatRender(HDC hDC, float x, float y);
+	void EquipRender(HDC hDC);
+	void InvenRender(HDC hDC);
+
+	void StatTextRender(HDC hDC, float x, float y);
+
 private:
 	const TCHAR* m_key;
 	const TCHAR* m_childKey;

@@ -16,6 +16,8 @@ public:
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
 	virtual void Damaged(int damage) override;
+	virtual void IncreaseEXP(int exp) override;
+	virtual void IncreaseMoney(int money) override;
 
 public:
 	void CreateUI();
@@ -29,6 +31,8 @@ public:
 	void SkillMoon();
 	void SkillBoom();
 	void SpawnCollide(float xPos, float yPos, int cx, int cy, int atk, OBJ::TAG type, DWORD lifeTime = 0);
+
+	void LevelUp();
 
 	// Combo
 	void ResetCombo();
@@ -53,9 +57,13 @@ public:
 	HDC GetDCByDirection(EX_DIR::TAG dir);
 
 public:
+	// Setter
 	void SetDirection(EX_DIR::TAG dir) { m_direction = dir; }
 
-	EX_DIR::TAG GetDirection() { return m_direction; }
+	// Getter
+	EX_DIR::TAG GetDirection() const { return m_direction; }
+	int GetMP() const { return m_mp; }
+	int GetSP() const { return m_sp; }
 
 private:
 	EX_DIR::TAG m_direction;
@@ -77,5 +85,4 @@ private:
 	bool m_isHit;
 	bool m_isAttackSpawn;
 	bool m_isSkillSpawn;
-
 };

@@ -27,6 +27,8 @@ void CJelly::Init()
 
 	m_hp = 50;
 	m_atk = 5;
+	m_money = 100;
+	m_exp = 50;
 
 	m_speed = 2.f;
 
@@ -49,6 +51,9 @@ int CJelly::Update()
 			m_isDead = true;
 
 			SpawnMotionTrail();
+
+			target->IncreaseEXP(m_exp);
+			target->IncreaseMoney(m_money);
 		}
 	}
 
@@ -207,7 +212,7 @@ void CJelly::Damaged(int damage)
 	{
 		if (nullptr == target) nullptr;
 
-		//m_hp -= damage;
+		m_hp -= damage;
 
 		CComboManager::IncreaseCombo();
 

@@ -14,11 +14,6 @@ CObj::~CObj()
 {
 }
 
-void CObj::Damaged(int damage)
-{
-	m_hp -= damage;
-}
-
 void CObj::UpdateRect()
 {
 	m_rect.left = LONG(m_info.xPos - (m_info.xSize >> 1));

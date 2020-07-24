@@ -120,6 +120,9 @@ void CMainApp::LoadAllImage()
 	//CBitmapManager::GetInstance()->InsertBitmap(__T("Tile_Dun2"), __T("../Image/Tile/tile_6.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Tile_Boss"), __T("../Image/Tile/tile_7.bmp"));
 
+	// NPC
+	CBitmapManager::GetInstance()->InsertBitmap(__T("NPC"), __T("../Image/NPC/NPC.bmp"));
+
 	// Player
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Player_Left"), __T("../Image/Player/Player_Left.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Player_LD"), __T("../Image/Player/Player_LD.bmp"));
@@ -159,6 +162,7 @@ void CMainApp::LoadAllImage()
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Number"), __T("../Image/Effect/Number.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Combo"), __T("../Image/Effect/Combo.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Comline"), __T("../Image/Effect/Comline.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("LvUp"), __T("../Image/Effect/LvUp.bmp"));
 
 	// UI
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Small_Hp"), __T("../Image/UI/HP/Small_Hp.bmp"));
@@ -176,4 +180,12 @@ void CMainApp::LoadAllImage()
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Stat_Info"), __T("../Image/UI/Stat_Info.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Equip_Info"), __T("../Image/UI/Equip_Info.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Inven_Info"), __T("../Image/UI/Inven_Info.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Exp"), __T("../Image/UI/Exp.bmp"));
+
+	// Shop
+	CBitmapManager::GetInstance()->InsertBitmap(__T("ShopWnd"), __T("../Image/Shop/ShopWnd.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Buy"), __T("../Image/Shop/Buy.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Sell"), __T("../Image/Shop/Sell.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("OK"), __T("../Image/Shop/OK.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Cancle"), __T("../Image/Shop/Cancle.bmp"));
 }

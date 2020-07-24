@@ -44,7 +44,7 @@ void CWidthButton::LateUpdate()
 			if (!lstrcmp(m_key, __T("Start")))
 			{
 				CSceneManager::GetInstance()->ChangeScene(CSceneManager::Scene_Town, TITLE_TO_TOWN);
-				CObjManager::GetInstance()->RemoveObject(OBJ::UI);
+				CObjManager::GetInstance()->RemoveObject(OBJ::BUTTON);
 				return;
 			}
 			else if (!lstrcmp(m_key, __T("Credit")))
@@ -60,13 +60,13 @@ void CWidthButton::LateUpdate()
 				CBitmapManager::GetInstance()->InsertBitmap(__T("TILE_BOSS"), __T("./Image/Tile/tile_7.bmp"));
 
 				CSceneManager::GetInstance()->ChangeScene(CSceneManager::Scene_Edit, NULL);
-				CObjManager::GetInstance()->RemoveObject(OBJ::UI);
+				CObjManager::GetInstance()->RemoveObject(OBJ::BUTTON);
 				return;
 			}
 			else if (!lstrcmp(m_key, __T("Exit")))
 			{
 				CSceneManager::GetInstance()->ChangeScene(CSceneManager::Scene_End, NULL);
-				CObjManager::GetInstance()->RemoveObject(OBJ::UI);
+				CObjManager::GetInstance()->RemoveObject(OBJ::BUTTON);
 				return;
 			}
 		}

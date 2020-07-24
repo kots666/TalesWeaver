@@ -42,13 +42,13 @@ void CSceneManager::Init()
 	m_nextScene = m_curScene;
 	m_scene = new CSceneLogo;*/
 
-	/*m_curScene = Scene_Title;
+	m_curScene = Scene_Title;
 	m_nextScene = m_curScene;
-	m_scene = new CSceneTitle;*/
+	m_scene = new CSceneTitle;
 	
-	m_curScene = Scene_Town;
+	/*m_curScene = Scene_Town;
 	m_nextScene = m_curScene;
-	m_scene = new CSceneTown(TITLE_TO_TOWN);
+	m_scene = new CSceneTown(TITLE_TO_TOWN);*/
 }
 
 void CSceneManager::Update()

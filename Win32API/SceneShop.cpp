@@ -2,6 +2,7 @@
 #include "SceneShop.h"
 #include "Player.h"
 #include "Effect.h"
+#include "NPC.h"
 
 CSceneShop::CSceneShop()
 {
@@ -26,6 +27,12 @@ void CSceneShop::Init()
 
 	CObj* newPortal = new CEffect(975.f, 825.f, 150, 200, __T("Portal"), 0, 24, 50, RGB(255, 255, 255));
 	CObjManager::GetInstance()->AddObject(newPortal, OBJ::EFFECT);
+
+	CObj* newNPC = new CNPC(535.f, 430.f, 96, 92, 1);
+	CObjManager::GetInstance()->AddObject(newNPC, OBJ::EFFECT);
+
+	newNPC = new CNPC(850.f, 400.f, 100, 100);
+	CObjManager::GetInstance()->AddObject(newNPC, OBJ::EFFECT);
 }
 
 /*
