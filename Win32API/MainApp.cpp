@@ -21,6 +21,9 @@ void CMainApp::Init()
 	CObj* newMouse = new CMouse;
 
 	CObjManager::GetInstance()->AddObject(newMouse, OBJ::MOUSE);
+	CSoundManager::GetInstance();
+	CInvenManager::GetInstance();
+	CEquipManager::GetInstance();
 }
 
 void CMainApp::Update()
@@ -33,6 +36,7 @@ void CMainApp::LateUpdate()
 {
 	CCollisionManager::EnemyCollision_Mul(*CObjManager::GetInstance()->GetList(OBJ::MONSTER), *CObjManager::GetInstance()->GetList(OBJ::PLAYER_SKILL));
 	CCollisionManager::EnemyCollision(*CObjManager::GetInstance()->GetList(OBJ::MONSTER), *CObjManager::GetInstance()->GetList(OBJ::PLAYER_ATTACK));
+	CCollisionManager::PlayerCollision_Mul(CObjManager::GetInstance()->GetPlayer(), *CObjManager::GetInstance()->GetList(OBJ::ENEMY_ATTACK_MUL));
 	CCollisionManager::PlayerCollision(CObjManager::GetInstance()->GetPlayer(), *CObjManager::GetInstance()->GetList(OBJ::ENEMY_ATTACK_ONE));
 	m_sceneMgr->LateUpdate();
 }
@@ -46,7 +50,16 @@ void CMainApp::Render()
 
 	BitBlt(backDC, 0, 0, WINCX, WINCY, memDC, 0, 0, SRCCOPY);
 
+	HFONT myFont = CreateFont(11, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, __T("±¼¸²"));
+	HFONT oldFont = (HFONT)SelectObject(backDC, myFont);
+
+	SetBkMode(backDC, 1);
+	SetTextColor(backDC, RGB(255, 255, 255));
+
 	m_sceneMgr->Render(backDC);
+
+	SelectObject(backDC, oldFont);
+	DeleteObject(myFont);
 
 	BitBlt(m_hDC, 0, 0, WINCX, WINCY, backDC, 0, 0, SRCCOPY);
 
@@ -72,6 +85,8 @@ void CMainApp::Release()
 	CBitmapManager::DestroyInstance();
 	CTileManager::DestroyInstance();
 	CSoundManager::DestroyInstance();
+	CInvenManager::DestroyInstance();
+	CEquipManager::DestroyInstance();
 }
 
 void CMainApp::LoadAllImage()
@@ -81,7 +96,7 @@ void CMainApp::LoadAllImage()
 	CBitmapManager::GetInstance()->InsertBitmap(__T("BackBuffer"), __T("../Image/BackBuffer.bmp"));
 
 	// Logo & Title
-	//CBitmapManager::GetInstance()->InsertBitmap(__T("Logo"), __T("../Image/Logo/Logo.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Logo"), __T("../Image/Logo/Logo.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Title"), __T("../Image/Title/Title.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Start"), __T("../Image/Title/Start.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Credit"), __T("../Image/Title/Credit.bmp"));
@@ -136,6 +151,10 @@ void CMainApp::LoadAllImage()
 	// Skill
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Skill_Moon"), __T("../Image/Skill/Skill_Moon.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Skill_Boom"), __T("../Image/Skill/Skill_Boom.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Skill_Soul"), __T("../Image/Skill/Skill_Soul.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Skill_Multi"), __T("../Image/Skill/Skill_Multi.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Skill_Quake"), __T("../Image/Skill/Skill_Quake.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Skill_Lightning"), __T("../Image/Skill/Skill_Lightning.bmp"));
 
 	// Monster
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Jelly_LD"), __T("../Image/Monster/Jelly_LD.bmp"));
@@ -163,6 +182,9 @@ void CMainApp::LoadAllImage()
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Combo"), __T("../Image/Effect/Combo.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Comline"), __T("../Image/Effect/Comline.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("LvUp"), __T("../Image/Effect/LvUp.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Miss"), __T("../Image/Effect/Miss.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("HpPotion"), __T("../Image/Effect/HpPotion.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("MpPotion"), __T("../Image/Effect/MpPotion.bmp"));
 
 	// UI
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Small_Hp"), __T("../Image/UI/HP/Small_Hp.bmp"));
@@ -181,6 +203,7 @@ void CMainApp::LoadAllImage()
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Equip_Info"), __T("../Image/UI/Equip_Info.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Inven_Info"), __T("../Image/UI/Inven_Info.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Exp"), __T("../Image/UI/Exp.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Episode"), __T("../Image/UI/Episode.bmp"));
 
 	// Shop
 	CBitmapManager::GetInstance()->InsertBitmap(__T("ShopWnd"), __T("../Image/Shop/ShopWnd.bmp"));
@@ -188,4 +211,10 @@ void CMainApp::LoadAllImage()
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Sell"), __T("../Image/Shop/Sell.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("OK"), __T("../Image/Shop/OK.bmp"));
 	CBitmapManager::GetInstance()->InsertBitmap(__T("Cancle"), __T("../Image/Shop/Cancle.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("WndClose"), __T("../Image/Shop/WndClose.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("WndUp"), __T("../Image/Shop/WndUp.bmp"));
+	CBitmapManager::GetInstance()->InsertBitmap(__T("WndDown"), __T("../Image/Shop/WndDown.bmp"));
+
+	// Item
+	CBitmapManager::GetInstance()->InsertBitmap(__T("Items"), __T("../Image/Item/Items.bmp"));
 }

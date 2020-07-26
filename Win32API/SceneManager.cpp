@@ -38,13 +38,13 @@ void CSceneManager::DestroyInstance()
 
 void CSceneManager::Init()
 {
-	/*m_curScene = Scene_Logo;
+	m_curScene = Scene_Logo;
 	m_nextScene = m_curScene;
-	m_scene = new CSceneLogo;*/
+	m_scene = new CSceneLogo;
 
-	m_curScene = Scene_Title;
+	/*m_curScene = Scene_Title;
 	m_nextScene = m_curScene;
-	m_scene = new CSceneTitle;
+	m_scene = new CSceneTitle;*/
 	
 	/*m_curScene = Scene_Town;
 	m_nextScene = m_curScene;

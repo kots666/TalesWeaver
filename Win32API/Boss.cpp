@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Boss.h"
 #include "CollideRect.h"
+#include "CollideSpawner.h"
 #include "MotionTrail.h"
 #include "Player.h"
+#include "Effect.h"
 
 CBoss::CBoss(float x, float y)
 	: m_isHit(false), m_isSkill(false), m_isAttack(false), m_isDeadAnimation(false), m_actionTime(GetTickCount()), m_actionSpeed(1500), m_hitTime(GetTickCount())
@@ -24,8 +26,9 @@ void CBoss::Init()
 	m_info.xSize = 70;
 	m_info.ySize = 100;
 
-	m_hp = 200;
-	m_atk = 10;
+	m_phase = 1;
+	m_hp = BOSS_HP;
+	m_atk = 100;
 
 	m_speed = 5.f;
 
@@ -33,11 +36,15 @@ void CBoss::Init()
 
 	target = CObjManager::GetInstance()->GetPlayer();
 
+	m_lightSpawnTime = GetTickCount();
+
 	UpdateRect();
 }
 
 int CBoss::Update()
 {
+	if (1 < m_phase) SpawnLightning();
+
 	if (m_isDeadAnimation)
 	{
 		bool isEnd = UpdateFrame();
@@ -51,17 +58,7 @@ int CBoss::Update()
 	}
 	else
 	{
-		if (m_isHit)
-		{
-			if (m_hitTime + 300 < GetTickCount())
-			{
-				m_isHit = false;
-				ChangeScene(BOSS_SCENE::IDLE);
-				m_actionTime = GetTickCount();
-				m_actionSpeed = 800;
-			}
-		}
-		else if (m_isSkill)
+		if (m_isSkill)
 		{
 			PortalProcess();
 		}
@@ -87,6 +84,8 @@ void CBoss::LateUpdate()
 		m_isDeadAnimation = true;
 		ChangeAction(EX_DIR::DOWN, BOSS_SCENE::DIE);
 	}
+
+	ChangePhase();
 
 	UpdateRect();
 }
@@ -118,7 +117,7 @@ void CBoss::Render(HDC hDC)
 	float xPos = (WINCX / 2) - 115.f;
 	float yPos = 0;
 
-	float hpPercent = 159 * m_hp / 200.f;
+	float hpPercent = 159.f * (float)m_hp / BOSS_HP;
 
 	TransparentBlt(hDC, xPos, yPos, 229, 46, UIDC, 0, 0, 229, 46, RGB(255,0,255));
 	BitBlt(hDC, xPos + 65, yPos + 21, hpPercent, 15, HPDC, 0, 0, SRCCOPY);
@@ -130,20 +129,23 @@ void CBoss::Release()
 
 void CBoss::Damaged(int damage)
 {
-	if (!m_isHit)
-	{
-		if (nullptr == target) return;
-		INFO targetInfo = target->GetInfo();
+	if (nullptr == target) return;
+	INFO targetInfo = target->GetInfo();
 
-		m_hp -= damage;
-		m_isHit = true;
-		m_isAttack = false;
-		m_hitTime = GetTickCount();
+	m_hp -= damage;
 
-		LookAtTarget();
+	CComboManager::IncreaseCombo();
 
-		CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
-	}
+	LookAtTarget();
+
+	CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
+
+	CObj* crashEffect = new CEffect(m_info.xPos, m_info.yPos, 127, 127, __T("Crash"), 0, 4, 50, RGB(0, 0, 0), true);
+	CObjManager::GetInstance()->AddObject(crashEffect, OBJ::EFFECT);
+
+	CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("Damaged.wav"), CSoundManager::MONSTER);
 }
 
 HDC CBoss::GetDCByDirection()
@@ -163,6 +165,45 @@ HDC CBoss::GetDCByDirection()
 	}
 
 	return returnDC;
+}
+
+void CBoss::ChangePhase()
+{
+	float percent = 100.f * (float)m_hp / BOSS_HP;
+
+	if (percent > 70.f)
+	{
+		m_phase = 1;
+	}
+	else if (percent > 40.f)
+	{
+		m_phase = 2;
+	}
+	else
+	{
+		m_phase = 3;
+	}
+}
+
+void CBoss::SpawnLightning()
+{
+	if (m_lightSpawnTime + 3000 < GetTickCount())
+	{
+		CObj* player = CObjManager::GetInstance()->GetPlayer();
+		if (nullptr == player) return;
+
+		INFO playerInfo = player->GetInfo();
+
+		CObj* newEffect = new CEffect(playerInfo.xPos, playerInfo.yPos, 150, 150, __T("Skill_Lightning"), 0, 4, 100, RGB(255, 0, 255), true);
+		CObjManager::GetInstance()->AddObject(newEffect, OBJ::EFFECT);
+
+		CObj* newCollide = new CCollideRect(playerInfo.xPos, playerInfo.yPos, 100, 100, m_atk);
+		CObjManager::GetInstance()->AddObject(newCollide, OBJ::ENEMY_ATTACK_ONE);
+
+		CSoundManager::GetInstance()->PlayOverlapSound(__T("Boss_Thunder.wav"), CSoundManager::MONSTER);
+
+		m_lightSpawnTime = GetTickCount();
+	}
 }
 
 void CBoss::CalcDistance()
@@ -201,6 +242,8 @@ void CBoss::Portal()
 {
 	if (!m_isSkill)
 	{
+		CSoundManager::GetInstance()->PlayOverlapSound(__T("Boss_Portal.wav"), CSoundManager::MONSTER);
+
 		m_isSkill = true;
 		ExecuteScene(BOSS_SCENE::PORTAL);
 		m_actionSpeed = 1500;
@@ -216,8 +259,30 @@ void CBoss::AttackProcess()
 		if (nullptr == target) return;
 		INFO targetInfo = target->GetInfo();
 
-		CObj* newCollide = new CCollideRect(targetInfo.xPos, targetInfo.yPos, 50, 50, m_atk);
-		CObjManager::GetInstance()->AddObject(newCollide, OBJ::ENEMY_ATTACK_ONE);
+		if (1 == m_phase)
+		{
+			CObj* newCollide = new CCollideRect(targetInfo.xPos, targetInfo.yPos, 50, 50, m_atk);
+			CObjManager::GetInstance()->AddObject(newCollide, OBJ::ENEMY_ATTACK_ONE);
+
+			CSoundManager::GetInstance()->PlayOverlapSound(__T("Boss_Attack.wav"), CSoundManager::MONSTER);
+		}
+		else if (2 == m_phase)
+		{
+			CObj* newSpawner = new CCollideSpawner(targetInfo.xPos, targetInfo.yPos, 100, 100, m_atk, 3, 100, OBJ::ENEMY_ATTACK_ONE, false);
+			CObjManager::GetInstance()->AddObject(newSpawner, OBJ::SPAWNER);
+
+			CSoundManager::GetInstance()->PlayOverlapSound(__T("Damaged.wav"), CSoundManager::MONSTER);
+		}
+		else
+		{
+			CObj* newEffect = new CEffect(targetInfo.xPos, targetInfo.yPos, 512, 512, __T("Skill_Multi"), 0, 41, SKILL_FRAME::SPEED[2], RGB(255, 0, 255), true);
+			CObjManager::GetInstance()->AddObject(newEffect, OBJ::EFFECT);
+
+			CObj* newSpawner = new CCollideSpawner(targetInfo.xPos, targetInfo.yPos, 100, 100, m_atk * 2, 10, 100, OBJ::ENEMY_ATTACK_MUL, false);
+			CObjManager::GetInstance()->AddObject(newSpawner, OBJ::SPAWNER);
+
+			CSoundManager::GetInstance()->PlayOverlapSound(__T("Boss_Multi.wav"), CSoundManager::MONSTER);
+		}
 
 		m_isAttackSpawn = true;
 	}
@@ -291,8 +356,33 @@ void CBoss::PortalProcess()
 		m_info.yPos = yPos;
 		m_direction = bossDir;
 
-		CObj* newCollide = new CCollideRect(targetInfo.xPos, targetInfo.yPos, 50, 50, m_atk);
-		CObjManager::GetInstance()->AddObject(newCollide, OBJ::ENEMY_ATTACK_ONE);
+		if (1 == m_phase)
+		{
+			CObj* newCollide = new CCollideRect(targetInfo.xPos, targetInfo.yPos, 50, 50, m_atk);
+			CObjManager::GetInstance()->AddObject(newCollide, OBJ::ENEMY_ATTACK_ONE);
+
+			CSoundManager::GetInstance()->PlayOverlapSound(__T("Damaged.wav"), CSoundManager::MONSTER);
+		}
+		else if (2 == m_phase)
+		{
+			CObj* newEffect = new CEffect(targetInfo.xPos, targetInfo.yPos, 256, 256, __T("Skill_Quake"), 0, 7, 100, RGB(255, 0, 255), true);
+			CObjManager::GetInstance()->AddObject(newEffect, OBJ::EFFECT);
+
+			CObj* newSpawner = new CCollideSpawner(targetInfo.xPos, targetInfo.yPos, 500, 500, m_atk, 1, 0, OBJ::ENEMY_ATTACK_MUL, false);
+			CObjManager::GetInstance()->AddObject(newSpawner, OBJ::SPAWNER);
+
+			CSoundManager::GetInstance()->PlayOverlapSound(__T("Boss_Quake.wav"), CSoundManager::MONSTER);
+		}
+		else
+		{
+			CObj* newEffect = new CEffect(targetInfo.xPos, targetInfo.yPos, 256, 256, __T("Skill_Quake"), 0, 7, 100, RGB(255, 0, 255), true);
+			CObjManager::GetInstance()->AddObject(newEffect, OBJ::EFFECT);
+
+			CObj* newSpawner = new CCollideSpawner(targetInfo.xPos, targetInfo.yPos, 500, 500, m_atk * 2, 4, 200, OBJ::ENEMY_ATTACK_MUL, false);
+			CObjManager::GetInstance()->AddObject(newSpawner, OBJ::SPAWNER);
+
+			CSoundManager::GetInstance()->PlayOverlapSound(__T("Boss_Quake.wav"), CSoundManager::MONSTER);
+		}
 	}
 }
 

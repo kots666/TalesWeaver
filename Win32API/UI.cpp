@@ -48,6 +48,25 @@ void CUI::Render(HDC hDC)
 	if (nullptr != m_startX)
 		start = *m_startX;
 
+	if (!lstrcmp(m_key, __T("Player_Hp")))
+	{
+		int value = ((float)*m_state / MAXHP) * 84.f;
+
+		TransparentBlt(hDC, x, y, value, height, memDC, start, 0, value, height, m_color);
+	}
+	else if (!lstrcmp(m_key, __T("Player_Mp")))
+	{
+		int value = ((float)*m_state / MAXMP) * 84.f;
+
+		TransparentBlt(hDC, x, y, value, height, memDC, start, 0, value, height, m_color);
+	}
+	else if (!lstrcmp(m_key, __T("Player_Sp")))
+	{
+		int value = ((float)*m_state / MAXSP) * 84.f;
+
+		TransparentBlt(hDC, x, y, value, height, memDC, start, 0, value, height, m_color);
+	}
+
 	if (nullptr != m_state)
 	{
 		int state = *m_state;

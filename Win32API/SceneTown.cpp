@@ -44,6 +44,9 @@ void CSceneTown::Init()
 	//필드 포탈 위치는 x : 14 y : 17
 	newPortal = new CEffect(700.f, 850.f, 150, 200, __T("Portal"), 0, 24, 50, RGB(255, 255, 255));
 	CObjManager::GetInstance()->AddObject(newPortal, OBJ::EFFECT);
+
+	CSoundManager::GetInstance()->PlayBGM(__T("BGM_Town.mp3"));
+	CSoundManager::GetInstance()->SetVolume(0.2f, CSoundManager::BGM);
 }
 
 void CSceneTown::Update()
@@ -67,11 +70,10 @@ void CSceneTown::Render(HDC hDC)
 	HDC memDC = CBitmapManager::GetInstance()->GetDC(__T("Town"));
 
 	BitBlt(hDC, 0, 0, WINCX, WINCY, memDC, CCamera::GetX(), CCamera::GetY(), SRCCOPY);
-
-	//CTileManager::GetInstance()->Render(hDC);
 }
 
 void CSceneTown::Release()
 {
 	CObjManager::GetInstance()->RemoveObject(OBJ::EFFECT);
+	CSoundManager::GetInstance()->StopSound(CSoundManager::BGM);
 }

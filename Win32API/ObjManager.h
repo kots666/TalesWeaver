@@ -20,7 +20,8 @@ public:
 public:
 	void Update();
 	void LateUpdate();
-	void Render(const HDC& hDC);
+	void Render(HDC hDC);
+	void SortedRender(HDC hDC);
 	void Release();
 
 public:
@@ -34,4 +35,5 @@ private:
 
 private:
 	list<CObj*> m_objectList[OBJ::END];
+	list<CObj*> m_sortedList;
 };

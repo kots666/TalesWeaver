@@ -13,6 +13,7 @@ public:
 	virtual void Render(HDC hDC) = 0;
 	virtual void Release() = 0;
 	virtual void Damaged(int damage) {}
+	virtual void SpecialDamaged(int damage) {}
 	virtual void IncreaseEXP(int exp) {}
 	virtual void IncreaseMoney(int money) {}
 

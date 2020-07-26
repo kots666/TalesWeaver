@@ -15,12 +15,12 @@ namespace PLAYER_SCENE
 namespace PLAYER_FRAME
 {
 	constexpr int ATTACK_SPAWNTIME = 2;
-	constexpr int SKILL_SPANWTIME = 6;
+	constexpr int SKILL_SPANWTIME = 5;
 
 	constexpr int START[8] = { 0, 0, 1, 0, 0, 0, 0, 0 };
 	constexpr int END[8] = { 6, 1, 2, 9, 10, 1, 5, 10 };
 	constexpr int SCENE[8] = { 0, 1, 1, 2, 3, 4, 5, 6 };
-	constexpr DWORD SPEED[8] = { 100, 500, 300, 100, 100, 500, 200, 100 };
+	constexpr DWORD SPEED[8] = { 80, 500, 300, 80, 100, 500, 200, 100 };
 }
 
 namespace BOSS_SCENE
@@ -61,14 +61,17 @@ namespace SKILL
 {
 	constexpr int Moon = 0;
 	constexpr int Boom = 1;
+	constexpr int Multi = 2;
+
+	
 }
 
 namespace SKILL_FRAME
 {
-	constexpr int START[2] = { 0, 0 };
-	constexpr int WIDTH[2] = { 242, 128 };
-	constexpr int HEIGHT[2] = { 309, 128 };
-	constexpr int END[2] = { 13, 11 };
-	constexpr DWORD SPEED[2] = { 100, 100 };
-	constexpr DWORD COLOR[2] = { RGB(0,0,0), RGB(255,0,255) };
+	constexpr int START[3] = { 0, 0, 0 };
+	constexpr int WIDTH[3] = { 242, 128, 512 };
+	constexpr int HEIGHT[3] = { 309, 128, 512 };
+	constexpr int END[3] = { 13, 11, 41 };
+	constexpr DWORD SPEED[3] = { 100, 100, 25 };
+	constexpr DWORD COLOR[3] = { RGB(0,0,0), RGB(255,0,255), RGB(255,0,255) };
 }

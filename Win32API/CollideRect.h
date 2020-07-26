@@ -4,7 +4,7 @@ class CCollideRect :
 	public CObj
 {
 public:
-	CCollideRect(float x, float y, int cx, int cy, int damage, DWORD lifeTime = 50);
+	CCollideRect(float x, float y, int cx, int cy, int damage, DWORD lifeTime = 0, bool isPlayer = true);
 	virtual ~CCollideRect();
 
 public:
@@ -22,5 +22,5 @@ private:
 	DWORD m_spawnTime;
 	DWORD m_lifeTime;
 	bool m_isHit;
+	bool m_isPlayer;
 };
-

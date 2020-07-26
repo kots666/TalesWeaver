@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "ObjManager.h"
-#include "CollideRect.h"
 #include "Effect.h"
 #include "UI.h"
 #include "InfoButton.h"
 #include "ComboUI.h"
 #include "TargetUI.h"
+#include "CollideSpawner.h"
+#include "Item.h"
 
 CPlayer::CPlayer(float x, float y, EX_DIR::TAG dir)
 	: m_direction(dir), m_attackTime(GetTickCount()), m_attackSpeed(0)
@@ -38,12 +39,13 @@ void CPlayer::Init()
 	m_totalExp = 100;
 	m_level = 1;
 
-	m_money = 1000;
+	m_money = 100000;
 
 	m_isRun = false;
-	m_isHit = false;
 	m_isAttackSpawn = false;
 	m_isSkillSpawn = false;
+	m_isInvincible = false;
+	m_isLive = true;
 
 	m_info.xSize = 50;
 	m_info.ySize = 90;
@@ -69,11 +71,16 @@ int CPlayer::Update()
 		return DEAD_EVENT;
 	}
 
-	FrameProcess();
+	if (m_isLive)
+	{
 
-	KeyCheck();
+		FrameProcess();
 
-	//cout << "x : " << m_info.xPos << ", y : " << m_info.yPos << endl;
+		DecreaseSP();
+		IncreaseSP();
+
+		KeyCheck();
+	}
 
 	return NO_EVENT;
 }
@@ -82,6 +89,15 @@ void CPlayer::LateUpdate()
 {
 	CCamera::SetCenterX(m_info.xPos);
 	CCamera::SetCenterY(m_info.yPos);
+
+	if (m_hp <= 0)
+	{
+		if (m_isLive)
+		{
+			Dead();
+			m_isLive = false;
+		}
+	}
 	UpdateRect();
 }
 
@@ -93,6 +109,29 @@ void CPlayer::Render(HDC hDC)
 	HDC memDC = GetDCByDirection(m_direction);
 
 	TransparentBlt(hDC, xPos - CCamera::GetX(), yPos - CCamera::GetY(), 256, 256, memDC, m_frame.startFrame * 256, PLAYER_FRAME::SCENE[m_frame.sceneFrame] * 256, 256, 256, RGB(255, 0, 255));
+
+	memDC = CBitmapManager::GetInstance()->GetDC(__T("Skill_Icon"));
+
+	for (int i = 0; i < 3; ++i)
+	{
+		int x = 10 + (i * 30);
+		int y = WINCY - 86 + 15;
+
+		BitBlt(hDC, x, y, 24, 24, memDC, i * 24, 0, SRCCOPY);
+	}
+
+	memDC = CBitmapManager::GetInstance()->GetDC(__T("Items"));
+
+	for (int i = 0; i < 3; ++i)
+	{
+		if (CInvenManager::GetInstance()->IsItemExist(i))
+		{
+			int x = 10 + (i * 30);
+			int y = WINCY - 86 + 56;
+
+			TransparentBlt(hDC, x, y, 24, 24, memDC, i * 24, 0, 24, 24, RGB(255, 0, 255));
+		}
+	}
 }
 
 void CPlayer::Release()
@@ -101,13 +140,34 @@ void CPlayer::Release()
 
 void CPlayer::Damaged(int damage)
 {
-	if (!m_isHit)
+	if (!m_isInvincible && m_isLive)
 	{
-		m_isHit = true;
+		if (PLAYER_SCENE::ATTACK != m_frame.sceneFrame && PLAYER_SCENE::READY != m_frame.sceneFrame && PLAYER_SCENE::SKILL != m_frame.sceneFrame)
+		{
+			m_curScene = PLAYER_SCENE::HIT;
+			ChangeScene(m_curScene);
+		}
+
+		m_hp -= damage;
+
+		CObj* crashEffect = new CEffect(m_info.xPos, m_info.yPos, 127, 127, __T("Crash2"), 0, 4, 50, RGB(0, 0, 0), true);
+		CObjManager::GetInstance()->AddObject(crashEffect, OBJ::EFFECT);
+
+		CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
+
+		CSoundManager::GetInstance()->PlayOverlapSound(__T("Hit.wav"), CSoundManager::PLAYER);
+	}
+}
+
+void CPlayer::SpecialDamaged(int damage)
+{
+	if (!m_isInvincible && m_isLive)
+	{
 		m_isAttackSpawn = false;
 		m_isSkillSpawn = false;
-		m_comboCnt = 0;
-		m_atkCnt = 0;
+
+		ResetCombo();
+
 		m_curScene = PLAYER_SCENE::HIT;
 		ExecuteScene(m_curScene);
 
@@ -117,6 +177,8 @@ void CPlayer::Damaged(int damage)
 		CObjManager::GetInstance()->AddObject(crashEffect, OBJ::EFFECT);
 
 		CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
+
+		CSoundManager::GetInstance()->PlayOverlapSound(__T("Hit.wav"), CSoundManager::PLAYER);
 	}
 }
 
@@ -133,6 +195,15 @@ void CPlayer::IncreaseEXP(int exp)
 void CPlayer::IncreaseMoney(int money)
 {
 	m_money += money;
+}
+
+void CPlayer::Dead()
+{
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("Failed.wav"), CSoundManager::PLAYER);
+
+	m_direction = EX_DIR::LD;
+
+	ExecuteScene(PLAYER_SCENE::SIT);
 }
 
 void CPlayer::CreateUI()
@@ -184,6 +255,67 @@ void CPlayer::UpdateRect()
 	m_moveRect.bottom = LONG(m_info.yPos + 32 + (30 >> 1));
 }
 
+void CPlayer::UsePotion(int id)
+{
+	if (CInvenManager::GetInstance()->IsItemExist(id))
+	{
+		switch (id)
+		{
+		case 0: HealHp(); break;
+		case 1: HealMp(); break;
+		case 2: HealSp(); break;
+		}
+
+		CInvenManager::GetInstance()->DecreaseItem(id);
+	}
+}
+
+void CPlayer::HealHp()
+{
+	m_hp += 1000;
+
+	if (m_hp > MAXHP) m_hp = MAXHP;
+
+	CObj* newEffect = new CEffect(m_info.xPos, m_info.yPos, 128, 128, __T("HpPotion"), 0, 6, 100, RGB(255, 255, 255), true);
+	CObjManager::GetInstance()->AddObject(newEffect, OBJ::UI);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("PotionUse.wav"), CSoundManager::PLAYER);
+}
+
+void CPlayer::HealMp()
+{
+	m_mp += 1000;
+
+	if (m_mp > MAXMP) m_mp = MAXMP;
+
+	CObj* newEffect = new CEffect(m_info.xPos, m_info.yPos, 128, 128, __T("MpPotion"), 0, 6, 100, RGB(255, 255, 255), true);
+	CObjManager::GetInstance()->AddObject(newEffect, OBJ::UI);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("PotionUse.wav"), CSoundManager::PLAYER);
+}
+
+void CPlayer::HealSp()
+{
+	m_sp += 1000;
+
+	if (m_sp > MAXSP) m_sp = MAXSP;
+
+	CObj* newEffect = new CEffect(m_info.xPos, m_info.yPos, 128, 128, __T("HpPotion"), 0, 6, 100, RGB(255, 255, 255), true);
+	CObjManager::GetInstance()->AddObject(newEffect, OBJ::UI);
+
+	newEffect = new CEffect(m_info.xPos, m_info.yPos, 128, 128, __T("MpPotion"), 0, 6, 100, RGB(255, 255, 255), true);
+	CObjManager::GetInstance()->AddObject(newEffect, OBJ::UI);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("PotionUse.wav"), CSoundManager::PLAYER);
+}
+
+void CPlayer::MakeHalfDie()
+{
+	m_hp >>= 2;
+	m_mp >>= 2;
+	m_sp >>= 2;
+}
+
 void CPlayer::FrameProcess()
 {
 	bool isEnd = UpdateFrame();
@@ -195,8 +327,8 @@ void CPlayer::FrameProcess()
 	{
 		switch (m_curScene)
 		{
+		case PLAYER_SCENE::IDLE: CComboManager::ResetCombo(); break;
 		case PLAYER_SCENE::ATTACK: m_isAttackSpawn = false; break;
-		case PLAYER_SCENE::HIT: m_isHit = false; break;
 		case PLAYER_SCENE::SKILL: m_isSkillSpawn = false; break;
 		}
 
@@ -205,7 +337,7 @@ void CPlayer::FrameProcess()
 		{
 			m_curScene = PLAYER_SCENE::SKILL;
 			m_nextScene = PLAYER_SCENE::IDLE;
-			if (m_comboCnt) ExecuteSpeedScene(m_curScene);
+			if (m_comboCnt) ExecuteScene(m_curScene);
 			else ChangeScene(m_curScene);
 		}
 
@@ -237,8 +369,7 @@ void CPlayer::FrameProcess()
 					m_curScene = m_nextScene;
 					m_nextScene = PLAYER_SCENE::IDLE;
 
-					if (CComboManager::GetCombo()) ExecuteSpeedScene(m_curScene);
-					else ExecuteScene(m_curScene);
+					ExecuteScene(m_curScene);
 				}
 				else
 				{
@@ -252,8 +383,7 @@ void CPlayer::FrameProcess()
 				m_curScene = m_nextScene;
 				m_nextScene = PLAYER_SCENE::IDLE;
 
-				if (CComboManager::GetCombo()) ExecuteSpeedScene(m_curScene);
-				else ExecuteScene(m_curScene);
+				ExecuteScene(m_curScene);
 			}
 			// 스킬이 끝났고 공격을 할 경우
 			else if (PLAYER_SCENE::SKILL == m_curScene && PLAYER_SCENE::ATTACK == m_nextScene)
@@ -262,8 +392,7 @@ void CPlayer::FrameProcess()
 				m_curScene = m_nextScene;
 				m_nextScene = PLAYER_SCENE::IDLE;
 
-				if (CComboManager::GetCombo()) ExecuteSpeedScene(m_curScene);
-				else ExecuteScene(m_curScene);
+				ExecuteScene(m_curScene);
 			}
 			else
 			{
@@ -277,10 +406,14 @@ void CPlayer::FrameProcess()
 
 void CPlayer::KeyCheck()
 {
-	if (CKeyManager::GetInstance()->isKeyDown(KEY_1))
-	{
-		LevelUp();
-	}
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_1)) m_skillNum = 0;
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_2)) m_skillNum = 1;
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_3)) m_skillNum = 2;
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_4)) UsePotion(0);
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_5)) UsePotion(1);
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_6)) UsePotion(2);
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_X)) MakeHalfDie();
+	if (CKeyManager::GetInstance()->isKeyDown(KEY_BACK)) m_isInvincible ^= true;
 
 	if (CKeyManager::GetInstance()->isKeyDown(KEY_R))
 	{
@@ -294,38 +427,25 @@ void CPlayer::KeyCheck()
 	{
 		if (CKeyManager::GetInstance()->isKeyDown(KEY_Z))
 		{
-			if (PLAYER_SCENE::HIT != m_curScene && PLAYER_SCENE::READY != m_curScene && PLAYER_SCENE::SKILL != m_curScene)
+			if (m_mp - 100 >= 0)
 			{
-				m_skillNum = SKILL::Moon;
-				if (PLAYER_SCENE::ATTACK == m_curScene)
+				m_mp -= 100;
+				if (PLAYER_SCENE::HIT != m_curScene && PLAYER_SCENE::READY != m_curScene && PLAYER_SCENE::SKILL != m_curScene)
 				{
-					if (CComboManager::GetCombo()) m_nextScene = PLAYER_SCENE::READY;
-				}
-				else
-				{
-					m_curScene = PLAYER_SCENE::READY;
-					m_nextScene = PLAYER_SCENE::SKILL;
-					ChangeScene(m_curScene);
+					CSoundManager::GetInstance()->PlayOverlapSound(__T("Skill_Ready.wav"), CSoundManager::PLAYER);
+					if (PLAYER_SCENE::ATTACK == m_curScene)
+					{
+						if (CComboManager::GetCombo()) m_nextScene = PLAYER_SCENE::READY;
+					}
+					else
+					{
+						m_curScene = PLAYER_SCENE::READY;
+						m_nextScene = PLAYER_SCENE::SKILL;
+						ChangeScene(m_curScene);
+					}
 				}
 			}
-		}
-
-		if (CKeyManager::GetInstance()->isKeyDown(KEY_X))
-		{
-			if (PLAYER_SCENE::HIT != m_curScene && PLAYER_SCENE::READY != m_curScene && PLAYER_SCENE::SKILL != m_curScene)
-			{
-				m_skillNum = SKILL::Boom;
-				if (PLAYER_SCENE::ATTACK == m_curScene)
-				{
-					if (CComboManager::GetCombo()) m_nextScene = PLAYER_SCENE::READY;
-				}
-				else
-				{
-					m_curScene = PLAYER_SCENE::READY;
-					m_nextScene = PLAYER_SCENE::SKILL;
-					ChangeScene(m_curScene);
-				}
-			}
+			else CSoundManager::GetInstance()->PlayOverlapSound(__T("NoMana.wav"), CSoundManager::PLAYER);
 		}
 
 		if (CKeyManager::GetInstance()->isKeyDown(KEY_SPACE))
@@ -454,7 +574,9 @@ void CPlayer::AttackSpawnCheck()
 			break;
 		}
 
-		SpawnCollide(xPos, yPos, 50, 50, m_atk, OBJ::PLAYER_ATTACK);
+		SpawnCollide(xPos, yPos, 50, 50, m_atk);
+
+		CSoundManager::GetInstance()->PlayOverlapSound(__T("Attack.wav"), CSoundManager::PLAYER);
 	}
 }
 
@@ -468,6 +590,7 @@ void CPlayer::SkillSpawnCheck()
 		{
 		case SKILL::Moon: SkillMoon(); break;
 		case SKILL::Boom: SkillBoom(); break;
+		case SKILL::Multi: SkillMulti(); break;
 		}
 	}
 }
@@ -511,20 +634,21 @@ void CPlayer::SkillMoon()
 		break;
 	}
 
-	SpawnCollide(xPos, yPos, 100, 100, 100, OBJ::PLAYER_SKILL);
-	//moon : 242 * 309	13장
-	//boom: 128 * 128	11장
+	DWORD skillSpeed = 250;
+
+	SpawnCollide(xPos, yPos, 100, 100, m_atk * 3, 4, skillSpeed, OBJ::PLAYER_SKILL);
 
 	int width = SKILL_FRAME::WIDTH[m_skillNum];
 	int height = SKILL_FRAME::HEIGHT[m_skillNum];
 	int end = SKILL_FRAME::END[m_skillNum];
 	DWORD speed = SKILL_FRAME::SPEED[m_skillNum];
-	if (m_comboCnt) speed /= 2;
 	DWORD color = SKILL_FRAME::COLOR[m_skillNum];
 
 	CObj* newEffect = new CEffect(xPos, yPos, width, height, __T("Skill_Moon"), 0, end, speed, color, true);
 
 	CObjManager::GetInstance()->AddObject(newEffect, OBJ::EFFECT);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("Skill_Moon.wav"), CSoundManager::PLAYER);
 }
 
 void CPlayer::SkillBoom()
@@ -550,13 +674,92 @@ void CPlayer::SkillBoom()
 		}
 	}
 
-	SpawnCollide(m_info.xPos, m_info.yPos, width * 3, height * 3, 50, OBJ::PLAYER_SKILL);
+	SpawnCollide(m_info.xPos, m_info.yPos, width * 3, height * 3, m_atk * 5, 1, 0, OBJ::PLAYER_SKILL);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("Skill_Boom.wav"), CSoundManager::PLAYER);
 }
 
-void CPlayer::SpawnCollide(float xPos, float yPos, int cx, int cy, int atk, OBJ::TAG type, DWORD lifeTime)
+void CPlayer::SkillMulti()
 {
-	CObj* newCollide = new CCollideRect(xPos, yPos, cx, cy, atk, lifeTime);
-	CObjManager::GetInstance()->AddObject(newCollide, type);
+	float xPos = m_info.xPos;
+	float yPos = m_info.yPos;
+
+	float mul = 1.5f;
+
+	switch (m_direction)
+	{
+	case EX_DIR::LEFT:
+		xPos -= TILECX * mul;
+		break;
+	case EX_DIR::LD:
+		xPos -= TILECX * mul / sqrtf(2.f);
+		yPos += TILECY * mul / sqrtf(2.f);
+		break;
+	case EX_DIR::DOWN:
+		yPos += TILECY * mul;
+		break;
+	case EX_DIR::RD:
+		xPos += TILECX * mul / sqrtf(2.f);
+		yPos += TILECY * mul / sqrtf(2.f);
+		break;
+	case EX_DIR::RIGHT:
+		xPos += TILECX * mul;
+		break;
+	case EX_DIR::RU:
+		xPos += TILECX * mul / sqrtf(2.f);
+		yPos -= TILECY * mul / sqrtf(2.f);
+		break;
+	case EX_DIR::UP:
+		yPos -= TILECY * mul;
+		break;
+	case EX_DIR::LU:
+		xPos -= TILECX * mul / sqrtf(2.f);
+		yPos -= TILECY * mul / sqrtf(2.f);
+		break;
+	}
+
+	SpawnCollide(xPos, yPos, 100, 100, m_atk * 2, 10, 100, OBJ::PLAYER_SKILL);
+
+	int width = SKILL_FRAME::WIDTH[m_skillNum];
+	int height = SKILL_FRAME::HEIGHT[m_skillNum];
+	int end = SKILL_FRAME::END[m_skillNum];
+	DWORD speed = SKILL_FRAME::SPEED[m_skillNum];
+	DWORD color = SKILL_FRAME::COLOR[m_skillNum];
+
+	CObj* newEffect = new CEffect(xPos, yPos, width, height, __T("Skill_Multi"), 0, end, speed, color, true);
+
+	CObjManager::GetInstance()->AddObject(newEffect, OBJ::EFFECT);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("Skill_Multi.wav"), CSoundManager::PLAYER);
+}
+
+void CPlayer::SpawnCollide(float x, float y, int cx, int cy, int damage, int spawnCount, DWORD gapTime, OBJ::TAG type)
+{
+	CObj* newSpawner = new CCollideSpawner(x, y, cx, cy, damage, spawnCount, gapTime, type);
+	CObjManager::GetInstance()->AddObject(newSpawner, OBJ::SPAWNER);
+}
+
+void CPlayer::DecreaseSP()
+{
+	if (m_sp <= 0)
+	{
+		m_isRun = 0;
+		m_speed = PLAYER_WALK_SPEED;
+	}
+
+	if (m_frame.sceneFrame == PLAYER_SCENE::RUN) --m_sp;
+}
+
+void CPlayer::IncreaseSP()
+{
+	if (m_frame.sceneFrame == PLAYER_SCENE::IDLE)
+	{
+		++m_mp;
+		++m_sp;
+	}
+	if (m_mp > MAXMP) m_mp = MAXMP;
+
+	if (m_sp > MAXSP) m_sp = MAXSP;
 }
 
 void CPlayer::LevelUp()
@@ -565,13 +768,114 @@ void CPlayer::LevelUp()
 
 	m_totalExp = 100 * ++m_level;
 
-	m_hp = 100;
-	m_mp = 100;
-	m_sp = 100;
+	m_hp = MAXHP;
+	m_mp = MAXMP;
+	m_sp = MAXSP;
 
 	// LevelUp Effect
 	CObj* LVUP = new CTargetUI(this, 128, 128, __T("LvUp"), 256, 256, 0, 30, 30, RGB(255, 0, 255), true);
 	CObjManager::GetInstance()->AddObject(LVUP, OBJ::EFFECT);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("lvup.wav"), CSoundManager::PLAYER);
+}
+
+void CPlayer::RefreshStat()
+{
+	m_hp = 100;
+	m_mp = 100;
+	m_sp = 100;
+	m_atk = 10;
+
+	MAXHP = 100;
+	MAXMP = 100;
+	MAXSP = 100;
+	ATK = 10;
+
+	// HEAD
+	const CItem* head = CEquipManager::GetInstance()->GetHead();
+	if (nullptr != head)
+	{
+		int id = head->GetID();
+		if (ITEM::HIGH_HAT == id)
+		{
+			MAXMP += 20000;
+		}
+		else if (ITEM::LOW_HAT == id)
+		{
+			MAXMP += 1000;
+		}
+	}
+
+	// HEAD
+	const CItem* armor = CEquipManager::GetInstance()->GetArmor();
+	if (nullptr != armor)
+	{
+		int id = armor->GetID();
+		if (ITEM::HIGH_ARMOR == id)
+		{
+			MAXHP += 20000;
+		}
+		else if (ITEM::LOW_ARMOR == id)
+		{
+			MAXHP += 1000;
+		}
+	}
+
+	// ARMS
+	const CItem* arms = CEquipManager::GetInstance()->GetArms();
+	if (nullptr != arms)
+	{
+		int id = arms->GetID();
+		if (ITEM::HIGH_SWORD == id)
+		{
+			ATK += 500;
+		}
+		else if (ITEM::LOW_SWORD == id)
+		{
+			ATK += 100;
+		}
+	}
+
+	// ARMS
+	const CItem* hand = CEquipManager::GetInstance()->GetHand();
+	if (nullptr != hand)
+	{
+		int id = hand->GetID();
+		if (ITEM::HIGH_RING == id)
+		{
+			ATK += 100;
+			MAXHP += 1000;
+			MAXMP += 500;
+			MAXSP += 500;
+		}
+		else if (ITEM::LOW_RING == id)
+		{
+			ATK += 20;
+			MAXHP += 200;
+			MAXMP += 100;
+			MAXSP += 100;
+		}
+	}
+
+	// BOOT
+	const CItem* foot = CEquipManager::GetInstance()->GetFoot();
+	if (nullptr != foot)
+	{
+		int id = foot->GetID();
+		if (ITEM::HIGH_BOOT == id)
+		{
+			MAXSP += 5000;
+		}
+		else if (ITEM::LOW_BOOT == id)
+		{
+			MAXSP += 1000;
+		}
+	}
+
+	m_hp = MAXHP;
+	m_mp = MAXMP;
+	m_sp = MAXSP;
+	m_atk = ATK;
 }
 
 void CPlayer::ResetCombo()
@@ -739,15 +1043,6 @@ void CPlayer::ExecuteScene(int scene)
 	m_frame.endFrame = PLAYER_FRAME::END[scene];
 	m_frame.frameTime = GetTickCount();
 	m_frame.frameSpeed = PLAYER_FRAME::SPEED[scene];
-}
-
-void CPlayer::ExecuteSpeedScene(int scene)
-{
-	m_frame.sceneFrame = scene;
-	m_frame.startFrame = PLAYER_FRAME::START[scene];
-	m_frame.endFrame = PLAYER_FRAME::END[scene];
-	m_frame.frameTime = GetTickCount();
-	m_frame.frameSpeed = PLAYER_FRAME::SPEED[scene] / 2;
 }
 
 HDC CPlayer::GetDCByDirection(EX_DIR::TAG dir)

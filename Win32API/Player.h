@@ -16,13 +16,21 @@ public:
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
 	virtual void Damaged(int damage) override;
+	virtual void SpecialDamaged(int damage) override;
 	virtual void IncreaseEXP(int exp) override;
 	virtual void IncreaseMoney(int money) override;
 
 public:
+	void Dead();
 	void CreateUI();
 	void CreateButton();
 	void UpdateRect();
+	void UsePotion(int id);
+	void HealHp();
+	void HealMp();
+	void HealSp();
+
+	void MakeHalfDie();
 
 	void FrameProcess();
 	void KeyCheck();
@@ -30,9 +38,15 @@ public:
 	void SkillSpawnCheck();
 	void SkillMoon();
 	void SkillBoom();
-	void SpawnCollide(float xPos, float yPos, int cx, int cy, int atk, OBJ::TAG type, DWORD lifeTime = 0);
+	void SkillMulti();
+	void SpawnCollide(float x, float y, int cx, int cy, int damage, int spawnCount = 1, DWORD gapTime = 0, OBJ::TAG type = OBJ::PLAYER_ATTACK);
+
+	void DecreaseSP();
+	void IncreaseSP();
 
 	void LevelUp();
+
+	void RefreshStat();
 
 	// Combo
 	void ResetCombo();
@@ -52,7 +66,6 @@ public:
 	void ChangeAction(EX_DIR::TAG dir, int scene);
 	void ChangeScene(int scene);
 	void ExecuteScene(int scene);
-	void ExecuteSpeedScene(int scene);
 
 	HDC GetDCByDirection(EX_DIR::TAG dir);
 
@@ -82,7 +95,8 @@ private:
 	DWORD m_attackTime;
 	DWORD m_attackSpeed;
 
-	bool m_isHit;
+	bool m_isLive;
 	bool m_isAttackSpawn;
 	bool m_isSkillSpawn;
+	bool m_isInvincible;
 };

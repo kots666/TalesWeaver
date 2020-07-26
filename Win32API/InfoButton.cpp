@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "InfoButton.h"
 #include "Player.h"
+#include "Item.h"
 
 CInfoButton::CInfoButton(float x, float y, int cx, int cy, const TCHAR * key, int cx2, int cy2, const TCHAR * child)
 	: m_key(key), m_childKey(child), m_childCX(cx2), m_childCY(cy2), m_isChildOpen(false)
@@ -36,12 +37,21 @@ int CInfoButton::Update()
 
 	if (PtInRect(&rc, pt))
 	{
+		if(!m_ID) CSoundManager::GetInstance()->PlayOverlapSound(__T("UI_Over.wav"), CSoundManager::UI);
+
+		m_ID = 1;
+
 		if (CKeyManager::GetInstance()->isKeyDown(KEY_LBUTTON))
 		{
+			CSoundManager::GetInstance()->PlayOverlapSound(__T("UI_Click.mp3"), CSoundManager::UI);
 			m_isChildOpen ^= true;
-			m_ID ^= 1;
+			m_ID = 1;
 		}
 	}
+	else m_ID = 0;
+
+	InvenToEquip(pt);
+	EquipToInven(pt);
 
 	return NO_EVENT;
 }
@@ -73,13 +83,69 @@ void CInfoButton::Render(HDC hDC)
 		TransparentBlt(hDC, childX, y, childWidth, childHeight, childDC, 0, 0, childWidth, childHeight, color);
 
 		if (!(lstrcmp(m_childKey, __T("Stat_Info")))) StatRender(hDC, childX, y);
-		if (!(lstrcmp(m_childKey, __T("Equip_Info")))) EquipRender(hDC);
-		if (!(lstrcmp(m_childKey, __T("Inven_Info")))) InvenRender(hDC);
+		if (!(lstrcmp(m_childKey, __T("Equip_Info")))) EquipRender(hDC, childX, y);
+		if (!(lstrcmp(m_childKey, __T("Inven_Info")))) InvenRender(hDC, childX, y);
 	}
 }
 
 void CInfoButton::Release()
 {
+}
+
+void CInfoButton::InvenToEquip(POINT& pt)
+{
+	if (!lstrcmp(m_childKey, __T("Inven_Info")) && m_isChildOpen)
+	{
+		int size = CInvenManager::GetInstance()->GetSize();
+		for (int i = 0; i < 12; ++i)
+		{
+			if (i >= size) break;
+
+			int x = m_info.xPos - m_childCX + 11;
+			int y = m_info.yPos + 42 + (i * 25);
+
+			RECT rc = { x, y, x + 24, y + 24 };
+
+			if (PtInRect(&rc, pt))
+			{
+				if (CKeyManager::GetInstance()->isKeyDown(KEY_LBUTTON))
+				{
+					int ID = CInvenManager::GetInstance()->GetInventory()->at(i)->GetID();
+
+					if (CEquipManager::GetInstance()->CanEquip(ID))
+					{
+						CEquipManager::GetInstance()->EquipItem(ID);
+						CInvenManager::GetInstance()->DecreaseItem(ID);
+
+						CSoundManager::GetInstance()->PlayOverlapSound(__T("UI_Click.mp3"), CSoundManager::UI);
+					}
+				}
+			}
+		}
+	}
+}
+
+void CInfoButton::EquipToInven(POINT& pt)
+{
+	if (!lstrcmp(m_childKey, __T("Equip_Info")) && m_isChildOpen)
+	{
+		for (int i = 0; i < 5; ++i)
+		{
+			int x = m_info.xPos - m_childCX + 6;
+			int y = m_info.yPos + 26 + (i * 31);
+
+			RECT rc = { x, y, x + 24, y + 24 };
+
+			if (PtInRect(&rc, pt))
+			{
+				if (CKeyManager::GetInstance()->isKeyDown(KEY_LBUTTON))
+				{
+					CEquipManager::GetInstance()->UnequipItem(i);
+					CSoundManager::GetInstance()->PlayOverlapSound(__T("UI_Click.mp3"), CSoundManager::UI);
+				}
+			}
+		}
+	}
 }
 
 void CInfoButton::StatRender(HDC hDC, float x, float y)
@@ -104,28 +170,113 @@ void CInfoButton::StatRender(HDC hDC, float x, float y)
 	StatTextRender(hDC, x, y);
 }
 
-void CInfoButton::EquipRender(HDC hDC)
+void CInfoButton::EquipRender(HDC hDC, float x, float y)
 {
+	HDC memDC = CBitmapManager::GetInstance()->GetDC(__T("Items"));
+
+	const CItem* item = CEquipManager::GetInstance()->GetHead();
+	if (nullptr != item)
+	{
+		int ID = item->GetID();
+		float xPos = x + 6;
+		float yPos = y + 26;
+
+		TransparentBlt(hDC, xPos, yPos, 24, 24, memDC, ID * 24, 0, 24, 24, RGB(255, 0, 255));
+
+		EquipTextRender(hDC, xPos + 36, yPos + 2, item->GetKey());
+	}
+
+	item = CEquipManager::GetInstance()->GetArmor();
+	if (nullptr != item)
+	{
+		int ID = item->GetID();
+		float xPos = x + 6;
+		float yPos = y + 26 + 31;
+
+		TransparentBlt(hDC, xPos, yPos, 24, 24, memDC, ID * 24, 0, 24, 24, RGB(255, 0, 255));
+
+		EquipTextRender(hDC, xPos + 36, yPos + 2, item->GetKey());
+	}
+
+	item = CEquipManager::GetInstance()->GetArms();
+	if (nullptr != item)
+	{
+		int ID = item->GetID();
+		float xPos = x + 6;
+		float yPos = y + 26 + 62;
+
+		TransparentBlt(hDC, xPos, yPos, 24, 24, memDC, ID * 24, 0, 24, 24, RGB(255, 0, 255));
+
+		EquipTextRender(hDC, xPos + 36, yPos + 2, item->GetKey());
+	}
+
+	item = CEquipManager::GetInstance()->GetHand();
+	if (nullptr != item)
+	{
+		int ID = item->GetID();
+		float xPos = x + 6;
+		float yPos = y + 26 + 93;
+
+		TransparentBlt(hDC, xPos, yPos, 24, 24, memDC, ID * 24, 0, 24, 24, RGB(255, 0, 255));
+
+		EquipTextRender(hDC, xPos + 36, yPos + 2, item->GetKey());
+	}
+
+	item = CEquipManager::GetInstance()->GetFoot();
+	if (nullptr != item)
+	{
+		int ID = item->GetID();
+		float xPos = x + 6;
+		float yPos = y + 26 + 124;
+
+		TransparentBlt(hDC, xPos, yPos, 24, 24, memDC, ID * 24, 0, 24, 24, RGB(255, 0, 255));
+
+		EquipTextRender(hDC, xPos + 36, yPos + 2, item->GetKey());
+	}
+
 }
 
-void CInfoButton::InvenRender(HDC hDC)
+void CInfoButton::InvenRender(HDC hDC, float x, float y)
 {
+	HDC memDC = CBitmapManager::GetInstance()->GetDC(__T("Items"));
+
+	int invenSize = CInvenManager::GetInstance()->GetSize();
+
+	int max = (invenSize < 12) ? invenSize : 12;
+
+	for (int i = 0; i < max; ++i)
+	{
+		float xPos = x + 11;
+		float yPos = y + 42 + (25 * i);
+
+		int id = CInvenManager::GetInstance()->GetInventory()->at(i)->GetID();
+		int count = CInvenManager::GetInstance()->GetInventory()->at(i)->GetCount();
+
+		TransparentBlt(hDC, xPos, yPos, 24, 24, memDC, id * 24, 0, 24, 24, RGB(255, 0, 255));
+		InvenTextRender(hDC, xPos, yPos, i, count);
+	}
+
+	TCHAR buffer[30];
+
+	float xPos = x + 56;
+	float yPos = y + 381;
+
+	wsprintf(buffer, __T("%d"), CInvenManager::GetInstance()->GetSize());
+	TextOut(hDC, xPos, yPos, buffer, lstrlen(buffer));
+
+	xPos += 210;
+
+	CObj* player = CObjManager::GetInstance()->GetPlayer();
+	if (nullptr == player) return;
+
+	int seed = player->GetMoney();
+
+	wsprintf(buffer, __T("%d"), seed);
+	TextOut(hDC, xPos, yPos, buffer, lstrlen(buffer));
 }
 
 void CInfoButton::StatTextRender(HDC hDC, float x, float y)
 {
-	HDC memDC = CreateCompatibleDC(hDC);
-	HBITMAP bmp = CreateCompatibleBitmap(hDC, WINCX, WINCY);
-	HBITMAP oldBmp = (HBITMAP)SelectObject(memDC, bmp);
-
-	HFONT myFont = CreateFont(11, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, __T("굴림"));
-	HFONT oldFont = (HFONT)SelectObject(memDC, myFont);
-
-	SetBkColor(memDC, RGB(0, 0, 0));
-	SetTextColor(memDC, RGB(255, 255, 255));
-
-	BitBlt(memDC, 0, 0, WINCX, WINCY, hDC, 0, 0, SRCCOPY);
-
 	TCHAR buffer[30];
 
 	CPlayer* player = dynamic_cast<CPlayer*>(CObjManager::GetInstance()->GetPlayer());
@@ -140,42 +291,42 @@ void CInfoButton::StatTextRender(HDC hDC, float x, float y)
 
 	// 레벨
 	wsprintf(buffer, __T("%d"), level);
-	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
 
 	offsetX = 225;
 	offsetY += 20;
 
 	// 이름
 	wsprintf(buffer, __T("막시민 리프크네"));
-	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
 
 	int hp = player->GetHP();
-	int maxHP = 100;
+	int maxHP = MAXHP;
 
 	offsetX = 240;
 	offsetY = 182;
 
 	// HP
 	wsprintf(buffer, __T("%d / %d"), hp, maxHP);
-	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
 
 	int mp = player->GetMP();
-	int maxMP = 100;
+	int maxMP = MAXMP;
 
 	offsetY += 15;
 
 	// MP
 	wsprintf(buffer, __T("%d / %d"), mp, maxMP);
-	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
 
 	int sp = player->GetSP();
-	int maxSP = 100;
+	int maxSP = MAXSP;
 
 	offsetY += 15;
 
 	// SP
 	wsprintf(buffer, __T("%d / %d"), sp, maxSP);
-	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
 
 	int money = player->GetMoney();
 
@@ -183,13 +334,79 @@ void CInfoButton::StatTextRender(HDC hDC, float x, float y)
 
 	// Money
 	wsprintf(buffer, __T("%d"), money);
-	TextOut(memDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
 
-	TransparentBlt(hDC, 0, 0, WINCX, WINCY, memDC, 0, 0, WINCX, WINCY, RGB(0, 0, 0));
+	// STAB
+	offsetX = 64;
+	offsetY = 182;
 
-	SelectObject(memDC, oldFont);
-	DeleteObject(myFont);
-	SelectObject(memDC, oldBmp);
-	DeleteObject(bmp);
-	DeleteDC(memDC);
+	int stab = player->GetLV() * 10;
+	wsprintf(buffer, __T("%d"), stab);
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	// HACK
+	offsetY += 15;
+
+	int hack = player->GetLV() * 10;
+	wsprintf(buffer, __T("%d"), hack);
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	// INT
+	offsetY += 15;
+
+	int INT = player->GetLV() * 5;
+	wsprintf(buffer, __T("%d"), INT);
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	// DEF
+	offsetY += 15;
+
+	int DEF = player->GetLV() * 20;
+	wsprintf(buffer, __T("%d"), DEF);
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	// MR
+	offsetY += 15;
+
+	int MR = player->GetLV() * 1;
+	wsprintf(buffer, __T("%d"), MR);
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	// DEX
+	offsetY += 15;
+
+	int DEX = player->GetLV() * 5;
+	wsprintf(buffer, __T("%d"), DEX);
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+
+	// AGI
+	offsetY += 15;
+
+	int AGI = player->GetLV() * 5;
+	wsprintf(buffer, __T("%d"), AGI);
+	TextOut(hDC, x + offsetX, y + offsetY, buffer, lstrlen(buffer));
+}
+
+void CInfoButton::EquipTextRender(HDC hDC, float x, float y, const TCHAR* key)
+{
+	TCHAR buffer[30];
+
+	wsprintf(buffer, key);
+	TextOut(hDC, x, y, buffer, lstrlen(buffer));
+}
+
+void CInfoButton::InvenTextRender(HDC hDC, float x, float y, int i, int count)
+{
+	TCHAR buffer[30];
+
+	float xPos = x + 34;
+	float yPos = y + 8;
+
+	wsprintf(buffer, CInvenManager::GetInstance()->GetInventory()->at(i)->GetKey());
+	TextOut(hDC, xPos, yPos, buffer, lstrlen(buffer));
+
+	xPos += 241;
+
+	wsprintf(buffer, __T("%d"), count);
+	TextOut(hDC, xPos, yPos, buffer, lstrlen(buffer));
 }

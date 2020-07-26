@@ -4,6 +4,11 @@
 //
 
 #pragma once
+#include <io.h>
+
+#include "fmod.h"
+#pragma comment(lib, "fmodex_vc.lib")
+
 #pragma comment(lib,"msimg32.lib")
 
 #ifdef _DEBUG
@@ -55,3 +60,5 @@ using namespace std;
 #include "Camera.h"
 #include "DamageFontManager.h"
 #include "ComboManager.h"
+#include "InvenManager.h"
+#include "EquipManager.h"

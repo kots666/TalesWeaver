@@ -1,9 +1,10 @@
 // Win32API.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
 //
-
 #include "stdafx.h"
 #include "Win32API.h"
 #include "MainApp.h"
+
+
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -24,6 +25,11 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 HWND g_hWnd;
+
+int MAXHP = 100;
+int MAXMP = 100;
+int MAXSP = 100;
+int ATK = 10;
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM                MyRegisterClass(HINSTANCE hInstance);

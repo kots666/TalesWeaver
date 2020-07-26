@@ -14,13 +14,14 @@ public:
 	virtual void LateUpdate() override;
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
+	virtual void Damaged(int damage) override;
+	virtual void SpecialDamaged(int damage) override;
 
 public:
 	void CalcDistance();
 	void Attack();
 	void AttackProcess();
 	void SpawnMotionTrail();
-	virtual void Damaged(int damage) override;
 
 	void ChangeAction(DIR::TAG dir, int scene);
 	void ChangeScene(int scene);
@@ -30,7 +31,6 @@ private:
 	DIR::TAG m_direction;
 	CObj* target;
 	bool m_isAttack;
-	bool m_isHit;
 	bool m_isDeadAnimation;
 	DWORD m_actionTime;
 	DWORD m_actionSpeed;

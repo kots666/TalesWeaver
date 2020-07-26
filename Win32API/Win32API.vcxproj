@@ -95,6 +95,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalDependencies>fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -110,6 +111,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalDependencies>fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,6 +131,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalDependencies>fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,6 +151,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalDependencies>fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -159,6 +163,7 @@
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollideRect.h" />
+    <ClInclude Include="CollideSpawner.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="ComboLine.h" />
     <ClInclude Include="ComboManager.h" />
@@ -168,10 +173,13 @@
     <ClInclude Include="Define.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Enum.h" />
+    <ClInclude Include="EquipManager.h" />
     <ClInclude Include="Extern.h" />
     <ClInclude Include="Frames.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="InfoButton.h" />
+    <ClInclude Include="InvenManager.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Jelly.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainApp.h" />
@@ -209,6 +217,7 @@
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollideRect.cpp" />
+    <ClCompile Include="CollideSpawner.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="ComboLine.cpp" />
     <ClCompile Include="ComboManager.cpp" />
@@ -216,7 +225,10 @@
     <ClCompile Include="DamageFont.cpp" />
     <ClCompile Include="DamageFontManager.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="EquipManager.cpp" />
     <ClCompile Include="InfoButton.cpp" />
+    <ClCompile Include="InvenManager.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Jelly.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="MainApp.cpp" />

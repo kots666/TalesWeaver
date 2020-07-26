@@ -27,6 +27,9 @@ void CSceneBoss::Init()
 
 	CObj* newBoss = new CBoss(2100.f, 1210.f);
 	CObjManager::GetInstance()->AddObject(newBoss, OBJ::MONSTER);
+
+	CSoundManager::GetInstance()->PlayBGM(__T("BGM_Boss.mp3"));
+	CSoundManager::GetInstance()->SetVolume(0.5f, CSoundManager::BGM);
 }
 
 void CSceneBoss::Update()
@@ -37,6 +40,8 @@ void CSceneBoss::Update()
 		CObj* newPortal = new CEffect(1975.f, 1150.f, 150, 200, __T("Portal"), 0, 24, 50, RGB(255, 255, 255));
 		CObjManager::GetInstance()->AddObject(newPortal, OBJ::EFFECT);
 		m_isSpawn = true;
+
+		CSoundManager::GetInstance()->PlayOverlapSound(__T("Success.wav"), CSoundManager::UI);
 	}
 }
 
@@ -66,4 +71,5 @@ void CSceneBoss::Render(HDC hDC)
 
 void CSceneBoss::Release()
 {
+	CSoundManager::GetInstance()->StopSound(CSoundManager::BGM);
 }

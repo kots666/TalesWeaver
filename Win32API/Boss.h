@@ -16,6 +16,9 @@ public:
 	virtual void Damaged(int damage) override;
 
 public:
+	void ChangePhase();
+	void SpawnLightning();
+
 	void CalcDistance();
 	void Attack();
 	void Portal();
@@ -35,6 +38,8 @@ public:
 private:
 	EX_DIR::TAG m_direction;
 	CObj* target;
+	int m_phase;
+
 	bool m_isHit;
 	bool m_isSkill;
 	bool m_isAttack;
@@ -43,5 +48,6 @@ private:
 	DWORD m_actionTime;
 	DWORD m_actionSpeed;
 	DWORD m_hitTime;
+	DWORD m_lightSpawnTime;
 };
 

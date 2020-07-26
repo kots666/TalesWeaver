@@ -25,6 +25,9 @@ void CSceneTitle::Init()
 	CObjManager::GetInstance()->AddObject(newButton, OBJ::BUTTON);
 
 	CTileManager::GetInstance();
+
+	CSoundManager::GetInstance()->PlayBGM(__T("BGM_Title.mp3"));
+	CSoundManager::GetInstance()->SetVolume(0.5f, CSoundManager::BGM);
 }
 
 void CSceneTitle::Update()
@@ -44,4 +47,5 @@ void CSceneTitle::Render(HDC hDC)
 
 void CSceneTitle::Release()
 {
+	CSoundManager::GetInstance()->StopSound(CSoundManager::BGM);
 }

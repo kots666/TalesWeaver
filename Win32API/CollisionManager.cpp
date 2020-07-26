@@ -68,6 +68,30 @@ void CCollisionManager::PlayerCollision(CObj * player, list<CObj*>& collList)
 			if (IntersectRect(&rc, &playerRect, &collRect))
 			{
 				player->Damaged(damage);
+				dynamic_cast<CCollideRect*>(elem)->SetIsHit();
+				elem->SetIsDead(true);
+			}
+		}
+	}
+}
+
+void CCollisionManager::PlayerCollision_Mul(CObj * player, list<CObj*>& collList)
+{
+	if (nullptr != player)
+	{
+		RECT rc = {};
+
+		RECT playerRect = player->GetRect();
+
+		for (auto& elem : collList)
+		{
+			RECT collRect = elem->GetRect();
+			int damage = elem->GetATK();
+
+			if (IntersectRect(&rc, &playerRect, &collRect))
+			{
+				player->SpecialDamaged(damage);
+				dynamic_cast<CCollideRect*>(elem)->SetIsHit();
 				elem->SetIsDead(true);
 			}
 		}

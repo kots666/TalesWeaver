@@ -133,6 +133,15 @@
     <Filter Include="01.Obj\ShopUI">
       <UniqueIdentifier>{807e8262-d972-4136-862a-3ab2508d0e6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Obj\Item">
+      <UniqueIdentifier>{64fe61e6-598b-42e7-b693-39eb47a26d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08.InvenManager">
+      <UniqueIdentifier>{bf3f4be3-8c4a-4a02-a61b-44768ffd3cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09.EquipManager">
+      <UniqueIdentifier>{c6af5923-dc9f-4011-8ed1-b2cee1e52c8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -207,9 +216,6 @@
     <ClInclude Include="SceneManager.h">
       <Filter>06.Scene\SceneManager</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>96.SoundManager</Filter>
-    </ClInclude>
     <ClInclude Include="SceneTitle.h">
       <Filter>06.Scene\02.Title</Filter>
     </ClInclude>
@@ -282,6 +288,19 @@
     <ClInclude Include="ShopUI.h">
       <Filter>01.Obj\ShopUI</Filter>
     </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>01.Obj\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="InvenManager.h">
+      <Filter>08.InvenManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipManager.h">
+      <Filter>09.EquipManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CollideSpawner.h" />
+    <ClInclude Include="SoundManager.h">
+      <Filter>96.SoundManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -331,9 +350,6 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>06.Scene\SceneManager</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundManager.cpp">
-      <Filter>96.SoundManager</Filter>
     </ClCompile>
     <ClCompile Include="SceneTitle.cpp">
       <Filter>06.Scene\02.Title</Filter>
@@ -403,6 +419,19 @@
     </ClCompile>
     <ClCompile Include="ShopUI.cpp">
       <Filter>01.Obj\ShopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>01.Obj\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="InvenManager.cpp">
+      <Filter>08.InvenManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipManager.cpp">
+      <Filter>09.EquipManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CollideSpawner.cpp" />
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>96.SoundManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

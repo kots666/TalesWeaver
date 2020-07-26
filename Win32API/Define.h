@@ -61,6 +61,8 @@ constexpr DWORD KEY_SPACE = 0x00004000;
 constexpr DWORD KEY_Z = 0x00008000;
 constexpr DWORD KEY_X = 0x00010000;
 
+constexpr int JELLY_HP = 1000;
+constexpr int BOSS_HP = 50000;
 
 // etc
 constexpr float PI = 3.141592f;

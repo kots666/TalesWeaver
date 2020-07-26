@@ -55,18 +55,42 @@ void CObjManager::LateUpdate()
 		{
 			elem->LateUpdate();
 			if (m_objectList[i].empty()) break;
+
+			if (OBJ::PLAYER == i || OBJ::MONSTER == i) m_sortedList.emplace_back(elem);
 		}
 	}
 }
 
-void CObjManager::Render(const HDC& hDC)
+void CObjManager::Render(HDC hDC)
 {
 	for (int i = 0; i < OBJ::END; ++i)
 	{
+		if (OBJ::PLAYER == i || OBJ::MONSTER == i)
+		{
+			SortedRender(hDC);
+			continue;
+		}
 		for (const auto& elem : m_objectList[i])
 		{
 			elem->Render(hDC);
 		}
+	}
+}
+
+void CObjManager::SortedRender(HDC hDC)
+{
+	for (int i = 0; i < 2; ++i)
+	{
+		m_sortedList.sort([](CObj* first, CObj* second)
+		{
+			return first->GetInfo().yPos < second->GetInfo().yPos;
+		});
+
+		for (auto& obj : m_sortedList)
+		{
+			obj->Render(hDC);
+		}
+		m_sortedList.clear();
 	}
 }
 

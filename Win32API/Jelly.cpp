@@ -6,7 +6,7 @@
 #include "DamageFont.h"
 
 CJelly::CJelly(float x, float y)
-	: m_isAttack(false), m_isHit(false), m_isDeadAnimation(false),
+	: m_isAttack(false), m_isDeadAnimation(false),
 	m_actionTime(GetTickCount()), m_actionSpeed(2000)
 {
 	m_info.xPos = x;
@@ -25,7 +25,7 @@ void CJelly::Init()
 	m_info.xSize = 40;
 	m_info.ySize = 50;
 
-	m_hp = 50;
+	m_hp = JELLY_HP;
 	m_atk = 5;
 	m_money = 100;
 	m_exp = 50;
@@ -59,27 +59,14 @@ int CJelly::Update()
 
 	else
 	{
-		if (m_isHit)
-		{
-			bool isEnd = UpdateFrame();
-
-			if (isEnd)
-			{
-				m_isHit = false;
-				ChangeScene(JELLY_SCENE::IDLE);
-				m_actionTime = GetTickCount();
-				m_actionSpeed = 800;
-			}
-		}
-
+		if (m_isAttack) AttackProcess();
 		else
 		{
-			if (m_isAttack) AttackProcess();
-
-			UpdateFrame();
-
-			if (nullptr != target) CalcDistance();
+			bool isEnd = UpdateFrame();
+			if (isEnd) ChangeScene(JELLY_SCENE::IDLE);
 		}
+
+		if (nullptr != target) CalcDistance();
 	}
 
 	if (m_isDead) return DEAD_EVENT;
@@ -120,7 +107,7 @@ void CJelly::Render(HDC hDC)
 	xPos = m_info.xPos - 26.f;
 	yPos = m_info.yPos + 25.f;
 
-	float length = 50 * m_hp / 50.f;
+	float length = 50.f * ((float)m_hp / JELLY_HP);
 
 	BitBlt(hDC, xPos++ - CCamera::GetX(), yPos++ - CCamera::GetY(), 52, 5, UIDC, 0, 0, SRCCOPY);
 	BitBlt(hDC, xPos - CCamera::GetX(), yPos - CCamera::GetY(), length, 3, HPDC, 0, 0, SRCCOPY);
@@ -208,32 +195,60 @@ void CJelly::SpawnMotionTrail()
 
 void CJelly::Damaged(int damage)
 {
-	if (!m_isHit)
+	if (nullptr == target) nullptr;
+
+	m_hp -= damage;
+
+	CComboManager::IncreaseCombo();
+
+	INFO targetInfo = target->GetInfo();
+
+	float xDist = targetInfo.xPos - m_info.xPos;
+	float yDist = targetInfo.yPos - m_info.yPos;
+
+	if (!m_isAttack)
 	{
-		if (nullptr == target) nullptr;
-
-		m_hp -= damage;
-
-		CComboManager::IncreaseCombo();
-
-		m_isHit = true;
-		m_isAttack = false;
-
-		INFO targetInfo = target->GetInfo();
-
-		float xDist = targetInfo.xPos - m_info.xPos;
-		float yDist = targetInfo.yPos - m_info.yPos;
-
 		if (0 > xDist && 0 > yDist) ChangeAction(DIR::LU, JELLY_SCENE::HIT);
 		if (0 <= xDist && 0 > yDist) ChangeAction(DIR::RU, JELLY_SCENE::HIT);
 		if (0 > xDist && 0 <= yDist) ChangeAction(DIR::LD, JELLY_SCENE::HIT);
 		if (0 <= xDist && 0 <= yDist) ChangeAction(DIR::RD, JELLY_SCENE::HIT);
-
-		CObj* crashEffect = new CEffect(m_info.xPos, m_info.yPos, 127, 127, __T("Crash"), 0, 4, 50, RGB(0, 0, 0), true);
-		CObjManager::GetInstance()->AddObject(crashEffect, OBJ::EFFECT);
-
-		CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
 	}
+
+	CObj* crashEffect = new CEffect(m_info.xPos, m_info.yPos, 127, 127, __T("Crash"), 0, 4, 50, RGB(0, 0, 0), true);
+	CObjManager::GetInstance()->AddObject(crashEffect, OBJ::EFFECT);
+
+	CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("Damaged.wav"), CSoundManager::MONSTER);
+}
+
+void CJelly::SpecialDamaged(int damage)
+{
+	if (nullptr == target) nullptr;
+
+	m_hp -= damage;
+
+	CComboManager::IncreaseCombo();
+
+	INFO targetInfo = target->GetInfo();
+
+	float xDist = targetInfo.xPos - m_info.xPos;
+	float yDist = targetInfo.yPos - m_info.yPos;
+
+	if (!m_isAttack)
+	{
+		if (0 > xDist && 0 > yDist) ChangeAction(DIR::LU, JELLY_SCENE::HIT);
+		if (0 <= xDist && 0 > yDist) ChangeAction(DIR::RU, JELLY_SCENE::HIT);
+		if (0 > xDist && 0 <= yDist) ChangeAction(DIR::LD, JELLY_SCENE::HIT);
+		if (0 <= xDist && 0 <= yDist) ChangeAction(DIR::RD, JELLY_SCENE::HIT);
+	}
+
+	CObj* crashEffect = new CEffect(m_info.xPos, m_info.yPos, 127, 127, __T("Crash"), 0, 4, 50, RGB(0, 0, 0), true);
+	CObjManager::GetInstance()->AddObject(crashEffect, OBJ::EFFECT);
+
+	CDamageFontManager::CreateDamageFont(m_info.xPos, m_info.yPos, damage);
+
+	CSoundManager::GetInstance()->PlayOverlapSound(__T("Damaged.wav"), CSoundManager::MONSTER);
 }
 
 void CJelly::ChangeAction(DIR::TAG dir, int scene)

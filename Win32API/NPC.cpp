@@ -74,11 +74,15 @@ void CNPC::ClickCheck()
 	pt.x += CCamera::GetX();
 	pt.y += CCamera::GetY();
 
-	if (PtInRect(&rc, pt))
+	if (CObjManager::GetInstance()->GetList(OBJ::SHOP)->empty())
 	{
-		if (CKeyManager::GetInstance()->isKeyDown(KEY_LBUTTON))
+		if (PtInRect(&rc, pt))
 		{
-			OpenShopUI();
+			if (CKeyManager::GetInstance()->isKeyDown(KEY_LBUTTON))
+			{
+				CSoundManager::GetInstance()->PlayOverlapSound(__T("OpenWnd.wav"), CSoundManager::UI);
+				OpenShopUI();
+			}
 		}
 	}
 }
@@ -86,6 +90,6 @@ void CNPC::ClickCheck()
 void CNPC::OpenShopUI()
 {
 	CObjManager::GetInstance()->RemoveObject(OBJ::SHOP);
-	CObj* newShop = new CShopUI(m_ID);
+	CObj* newShop = new CShopUI();
 	CObjManager::GetInstance()->AddObject(newShop, OBJ::SHOP);
 }

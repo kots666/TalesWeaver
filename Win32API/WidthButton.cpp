@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "WidthButton.h"
+#include "Effect.h"
 
 CWidthButton::CWidthButton(float x, float y, int cx, int cy, const TCHAR * key)
 	: m_key(key)
@@ -37,18 +38,26 @@ void CWidthButton::LateUpdate()
 
 	if (PtInRect(&m_rect, pt))
 	{
+		if(m_ID == 1)
+			CSoundManager::GetInstance()->PlayOverlapSound(__T("BtnOver.wav"), CSoundManager::UI);
 		m_ID = 0;
 
 		if (CKeyManager::GetInstance()->isKeyDown(KEY_LBUTTON))
 		{
 			if (!lstrcmp(m_key, __T("Start")))
 			{
+				float x = (WINCX / 2) - 171;
+				float y = 20 + 8;
+
+				CSoundManager::GetInstance()->PlayOverlapSound(__T("Menu_Select.wav"), CSoundManager::UI);
 				CSceneManager::GetInstance()->ChangeScene(CSceneManager::Scene_Town, TITLE_TO_TOWN);
 				CObjManager::GetInstance()->RemoveObject(OBJ::BUTTON);
+
 				return;
 			}
 			else if (!lstrcmp(m_key, __T("Credit")))
 			{
+				CSoundManager::GetInstance()->PlayOverlapSound(__T("Menu_Select.wav"), CSoundManager::UI);
 				// Tile
 				CBitmapManager::GetInstance()->InsertBitmap(__T("TILE_NORMAL"), __T("./Image/Tile/tile_0.bmp"));
 				CBitmapManager::GetInstance()->InsertBitmap(__T("TILE_FAIL"), __T("./Image/Tile/tile_1.bmp"));
@@ -65,6 +74,8 @@ void CWidthButton::LateUpdate()
 			}
 			else if (!lstrcmp(m_key, __T("Exit")))
 			{
+				CSoundManager::GetInstance()->PlayOverlapSound(__T("Menu_Select.wav"), CSoundManager::UI);
+
 				CSceneManager::GetInstance()->ChangeScene(CSceneManager::Scene_End, NULL);
 				CObjManager::GetInstance()->RemoveObject(OBJ::BUTTON);
 				return;

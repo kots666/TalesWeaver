@@ -35,6 +35,9 @@ void CSceneField::Init()
 
 	newMonster = new CJelly(825.f, 1275.f);
 	CObjManager::GetInstance()->AddObject(newMonster, OBJ::MONSTER);
+
+	CSoundManager::GetInstance()->PlayBGM(__T("BGM_Field.mp3"));
+	CSoundManager::GetInstance()->SetVolume(0.3f, CSoundManager::BGM);
 }
 
 void CSceneField::Update()
@@ -78,4 +81,5 @@ void CSceneField::Release()
 {
 	CObjManager::GetInstance()->RemoveObject(OBJ::EFFECT);
 	CObjManager::GetInstance()->RemoveObject(OBJ::MONSTER);
+	CSoundManager::GetInstance()->StopSound(CSoundManager::BGM);
 }

@@ -16,18 +16,23 @@ public:
 	virtual void Release() override;
 
 public:
+	void InvenToEquip(POINT& pt);
+	void EquipToInven(POINT& pt);
+
 	void StatRender(HDC hDC, float x, float y);
-	void EquipRender(HDC hDC);
-	void InvenRender(HDC hDC);
+	void EquipRender(HDC hDC, float x, float y);
+	void InvenRender(HDC hDC, float x, float y);
 
 	void StatTextRender(HDC hDC, float x, float y);
+	void EquipTextRender(HDC hDC, float x, float y, const TCHAR* key);
+	void InvenTextRender(HDC hDC, float x, float y, int i, int count);
 
 private:
 	const TCHAR* m_key;
 	const TCHAR* m_childKey;
 	int m_childCX;
 	int m_childCY;
-	bool m_isChildOpen;
 	int m_ID;
+	bool m_isChildOpen;
 };
 

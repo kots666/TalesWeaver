@@ -31,8 +31,7 @@ void CSceneShop::Init()
 	CObj* newNPC = new CNPC(535.f, 430.f, 96, 92, 1);
 	CObjManager::GetInstance()->AddObject(newNPC, OBJ::EFFECT);
 
-	newNPC = new CNPC(850.f, 400.f, 100, 100);
-	CObjManager::GetInstance()->AddObject(newNPC, OBJ::EFFECT);
+	CSoundManager::GetInstance()->PlayBGM(__T("BGM_Store.wav"));
 }
 
 /*
@@ -66,4 +65,6 @@ void CSceneShop::Render(HDC hDC)
 void CSceneShop::Release()
 {
 	CObjManager::GetInstance()->RemoveObject(OBJ::EFFECT);
+	CObjManager::GetInstance()->RemoveObject(OBJ::SHOP);
+	CSoundManager::GetInstance()->StopSound(CSoundManager::BGM);
 }

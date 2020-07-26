@@ -16,6 +16,7 @@ public:
 	static int GetCollideTileState(int index);
 
 	static void PlayerCollision(CObj* player, list<CObj*>& collList);
+	static void PlayerCollision_Mul(CObj* player, list<CObj*>& collList);
 	static void EnemyCollision(list<CObj*>& enemyList, list<CObj*>& collList);
 	static void EnemyCollision_Mul(list<CObj*>& enemyList, list<CObj*>& collList);
 
