@@ -62,6 +62,15 @@ void CPlayer::Init()
 	CreateButton();
 
 	UpdateRect();
+
+	CItem* hpPotion = new CItem(0, 20);
+	CInvenManager::GetInstance()->AddItem(hpPotion);
+
+	CItem* mpPotion = new CItem(1, 20);
+	CInvenManager::GetInstance()->AddItem(mpPotion);
+
+	CItem* spPotion = new CItem(2, 20);
+	CInvenManager::GetInstance()->AddItem(spPotion);
 }
 
 int CPlayer::Update()
@@ -311,9 +320,9 @@ void CPlayer::HealSp()
 
 void CPlayer::MakeHalfDie()
 {
-	m_hp >>= 2;
-	m_mp >>= 2;
-	m_sp >>= 2;
+	m_hp >>= 1;
+	m_mp >>= 1;
+	m_sp >>= 1;
 }
 
 void CPlayer::FrameProcess()
@@ -781,6 +790,14 @@ void CPlayer::LevelUp()
 
 void CPlayer::RefreshStat()
 {
+	float oldHp = m_hp;
+	float oldMp = m_mp;
+	float oldSp = m_sp;
+
+	float pHp = 100.f * (float)oldHp / (float)MAXHP;
+	float pMp = 100.f * (float)oldMp / (float)MAXMP;
+	float pSp = 100.f * (float)oldSp / (float)MAXSP;
+
 	m_hp = 100;
 	m_mp = 100;
 	m_sp = 100;
@@ -872,9 +889,33 @@ void CPlayer::RefreshStat()
 		}
 	}
 
-	m_hp = MAXHP;
-	m_mp = MAXMP;
-	m_sp = MAXSP;
+	if (oldHp >= MAXHP)
+	{
+		m_hp = MAXHP;
+	}
+	else
+	{
+		m_hp = MAXHP * pHp / 100.f;
+	}
+
+	if (oldMp >= MAXMP)
+	{
+		m_mp = MAXMP;
+	}
+	else
+	{
+		m_mp = MAXMP * pMp / 100.f;
+	}
+
+	if (oldSp >= MAXSP)
+	{
+		m_sp = MAXSP;
+	}
+	else
+	{
+		m_sp = MAXSP * pSp / 100.f;
+	}
+
 	m_atk = ATK;
 }
 
